@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Irregular Verbs Quiz</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --green: #1D9E75; --green-light: #E1F5EE; --green-dark: #085041;
+  --amber: #BA7517; --amber-light: #FAEEDA; --amber-dark: #412402;
+  --red: #E24B4A; --red-light: #FCEBEB;
+  --blue: #185FA5; --blue-light: #E6F1FB;
+  --purple: #6B3FA0; --purple-light: #F0EAF8;
+  --text: #1A1A1A; --muted: #6B7280;
+  --bg: #FFFFFF; --bg2: #F5F5F5;
+  --border: #E5E7EB;
+  --radius: 14px; --radius-sm: 8px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #F0F0F0; --muted: #9CA3AF;
+    --bg: #1C1C1E; --bg2: #2C2C2E;
+    --border: #3A3A3C;
+  }
+}
+
+body { background: var(--bg2); }
+.app { font-family: 'DM Sans', sans-serif; padding: 1.5rem 1rem; max-width: 640px; margin: 0 auto; }
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* HOME */
+.home-header { text-align: center; padding: 2rem 0 1.5rem; }
+.home-logo { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--text); letter-spacing: -0.5px; }
+.home-sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+.section-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin: 1.5rem 0 0.5rem; }
+.unit-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-bottom: 0.5rem; }
+.unit-card { background: var(--bg); border: 0.5px solid var(--border); border-left: 3px solid var(--purple); border-radius: var(--radius); padding: 1rem; cursor: pointer; transition: border-color 0.15s, transform 0.1s; }
+.unit-card:hover { border-color: var(--purple); transform: translateY(-1px); }
+.unit-num { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.unit-name { font-size: 14px; font-weight: 500; color: var(--text); margin-top: 4px; line-height: 1.3; }
+.unit-prog { margin-top: 8px; height: 3px; background: var(--bg2); border-radius: 99px; overflow: hidden; }
+.unit-bar { height: 100%; background: var(--purple); border-radius: 99px; transition: width 0.3s; }
+.unit-count { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+.btn-primary { display: block; width: 100%; padding: 12px; background: var(--text); color: var(--bg); border: none; border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; margin-top: 1rem; transition: opacity 0.15s; }
+.btn-primary:hover { opacity: 0.85; }
+.btn-secondary { display: block; width: 100%; padding: 11px; background: transparent; color: var(--text); border: 0.5px solid var(--border); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 8px; transition: background 0.15s; }
+.btn-secondary:hover { background: var(--bg2); }
+
+/* QUIZ */
+.quiz-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem; }
+.quiz-back { background: none; border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 6px 12px; font-size: 13px; cursor: pointer; color: var(--muted); font-family: 'DM Sans', sans-serif; }
+.quiz-back:hover { background: var(--bg2); }
+.quiz-meta { flex: 1; }
+.quiz-title { font-size: 15px; font-weight: 500; color: var(--text); }
+.quiz-subtitle { font-size: 12px; color: var(--muted); }
+.quiz-progress-bar { height: 4px; background: var(--bg2); border-radius: 99px; overflow: hidden; margin-bottom: 1.5rem; }
+.quiz-progress-fill { height: 100%; background: var(--purple); border-radius: 99px; transition: width 0.4s ease; }
+
+.card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 2rem 1.5rem; text-align: center; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 1rem; }
+.card-label { font-size: 11px; font-weight: 600; color: var(--purple); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.75rem; }
+.card-word { font-family: 'DM Serif Display', serif; font-size: 38px; color: var(--text); letter-spacing: -0.5px; line-height: 1.2; }
+.card-context { font-size: 13px; color: var(--muted); margin-top: 8px; font-style: italic; line-height: 1.5; }
+.card-reveal { font-size: 16px; font-weight: 500; color: var(--text); margin-top: 0.75rem; background: var(--purple-light); padding: 8px 14px; border-radius: var(--radius-sm); }
+.card-hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+.options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1rem; }
+.opt { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 13px; font-weight: 500; cursor: pointer; text-align: left; font-family: 'DM Sans', sans-serif; color: var(--text); transition: border-color 0.15s, background 0.15s; line-height: 1.45; }
+.opt:hover:not(:disabled) { border-color: var(--purple); background: var(--purple-light); }
+.opt.correct { background: var(--green-light); border-color: var(--green); color: var(--green-dark); }
+.opt.wrong { background: var(--red-light); border-color: var(--red); color: #791F1F; }
+.opt:disabled { cursor: default; }
+
+.rate-label { font-size: 13px; color: var(--muted); text-align: center; margin-bottom: 10px; }
+.rate-btns { display: flex; gap: 8px; }
+.rate-btn { flex: 1; padding: 10px; border-radius: var(--radius-sm); border: 0.5px solid var(--border); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.15s; }
+.rate-easy { background: var(--green-light); color: var(--green-dark); border-color: var(--green); }
+.rate-medium { background: var(--amber-light); color: var(--amber-dark); border-color: var(--amber); }
+.rate-hard { background: var(--red-light); color: #791F1F; border-color: var(--red); }
+
+/* RESULTS */
+.results-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 2rem; text-align: center; margin-bottom: 1rem; }
+.results-score { font-family: 'DM Serif Display', serif; font-size: 56px; color: var(--text); }
+.results-label { font-size: 14px; color: var(--muted); margin-top: 4px; }
+.results-breakdown { display: flex; gap: 12px; margin-top: 1.5rem; justify-content: center; }
+.rb { flex: 1; max-width: 120px; padding: 10px; border-radius: var(--radius-sm); border: 0.5px solid var(--border); }
+.rb-num { font-size: 20px; font-weight: 600; }
+.rb-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.next-due { background: var(--blue-light); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 13px; color: var(--blue); margin-bottom: 1rem; }
+
+.badge { display: inline-block; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 2px 6px; border-radius: 4px; margin-top: 4px; background: var(--purple-light); color: var(--purple); }
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- HOME -->
+<div id="screen-home" class="screen active">
+  <div class="home-header">
+    <div class="home-logo">Irregular Verbs</div>
+    <div class="home-sub">80 common verbs · 8 units · spaced repetition</div>
+  </div>
+  <div class="section-label">Choose a unit</div>
+  <div class="unit-grid" id="unit-grid-container"></div>
+  <button class="btn-primary" onclick="startReview()">Review due verbs</button>
+  <button class="btn-secondary" onclick="startAll()">Practice all learned verbs</button>
+</div>
+
+<!-- QUIZ -->
+<div id="screen-quiz" class="screen">
+  <div class="quiz-header">
+    <button class="quiz-back" onclick="goHome()">← Back</button>
+    <div class="quiz-meta">
+      <div class="quiz-title" id="quiz-title">Unit 1</div>
+      <div class="quiz-subtitle" id="quiz-subtitle">Question 1 of 10</div>
+    </div>
+  </div>
+  <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quiz-progress-fill"></div></div>
+
+  <div class="card" id="quiz-card">
+    <div class="card-label">Past · Past Participle · Russian?</div>
+    <div class="card-word" id="quiz-word">go</div>
+    <div class="card-context" id="quiz-context"></div>
+    <div class="card-reveal" id="quiz-reveal" style="display:none"></div>
+    <div class="card-hint" id="quiz-hint"></div>
+  </div>
+
+  <div id="options-area">
+    <div class="options-grid" id="options-grid"></div>
+  </div>
+
+  <div id="rate-area" style="display:none">
+    <div class="rate-label">How well did you know it?</div>
+    <div class="rate-btns">
+      <button class="rate-btn rate-easy" onclick="rate(3)">Easy</button>
+      <button class="rate-btn rate-medium" onclick="rate(2)">Ok</button>
+      <button class="rate-btn rate-hard" onclick="rate(1)">Hard</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="screen-results" class="screen">
+  <div class="results-card">
+    <div class="results-label" id="results-unit-label">Unit 1 complete</div>
+    <div class="results-score" id="results-score">8/10</div>
+    <div class="results-label">correct</div>
+    <div class="results-breakdown">
+      <div class="rb">
+        <div class="rb-num" id="rb-easy" style="color:var(--green)">0</div>
+        <div class="rb-label">Easy</div>
+      </div>
+      <div class="rb">
+        <div class="rb-num" id="rb-medium" style="color:var(--amber)">0</div>
+        <div class="rb-label">Ok</div>
+      </div>
+      <div class="rb">
+        <div class="rb-num" id="rb-hard" style="color:var(--red)">0</div>
+        <div class="rb-label">Hard</div>
+      </div>
+    </div>
+  </div>
+  <div class="next-due" id="next-due-msg"></div>
+  <button class="btn-primary" onclick="goHome()">Back to units</button>
+  <button class="btn-secondary" id="retry-btn" onclick="retryHard()">Retry hard words</button>
+</div>
+
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+//  IRREGULAR VERB DATA
+//  word = infinitive
+//  def  = "Past · Past Participle · перевод"
+//  distractors: carefully crafted traps
+//    - spelling errors in forms
+//    - very close Russian translation
+//    - similar-sounding forms from other verbs
+//    - plausible but wrong combos
+// ─────────────────────────────────────────────
+const VOCAB = {
+
+  "Unit 1 – be / have / do / go": [
+    {
+      word: "be",
+      def: "was/were · been · быть",
+      ctx: "I want to be a doctor.",
+      distractors: [
+        "were · was · быть",
+        "was/were · being · существовать",
+        "was/were · been · иметь"
+      ]
+    },
+    {
+      word: "have",
+      def: "had · had · иметь",
+      ctx: "I had a great idea.",
+      distractors: [
+        "haved · haved · иметь",
+        "had · have · владеть",
+        "had · had · брать"
+      ]
+    },
+    {
+      word: "do",
+      def: "did · done · делать",
+      ctx: "She did her homework.",
+      distractors: [
+        "did · did · делать",
+        "done · done · делать",
+        "did · done · дать"
+      ]
+    },
+    {
+      word: "go",
+      def: "went · gone · идти/ехать",
+      ctx: "They went to Berlin last week.",
+      distractors: [
+        "went · went · идти/ехать",
+        "goed · gone · идти/ехать",
+        "went · gone · ждать"
+      ]
+    },
+    {
+      word: "say",
+      def: "said · said · говорить/сказать",
+      ctx: "He said nothing.",
+      distractors: [
+        "sayed · sayed · говорить",
+        "said · said · думать",
+        "said · said · спрашивать"
+      ]
+    },
+    {
+      word: "get",
+      def: "got · got/gotten · получать/становиться",
+      ctx: "I got your message.",
+      distractors: [
+        "got · got · брать",
+        "got · gotten · давать",
+        "getted · got · получать"
+      ]
+    },
+    {
+      word: "make",
+      def: "made · made · делать/готовить",
+      ctx: "She made a great cake.",
+      distractors: [
+        "made · made · делать",
+        "maked · maked · делать/готовить",
+        "made · made · брать"
+      ]
+    },
+    {
+      word: "know",
+      def: "knew · known · знать",
+      ctx: "I knew the answer.",
+      distractors: [
+        "knowed · known · знать",
+        "knew · knew · знать",
+        "knew · known · узнавать"
+      ]
+    },
+    {
+      word: "think",
+      def: "thought · thought · думать",
+      ctx: "I thought about you.",
+      distractors: [
+        "thinked · thought · думать",
+        "thought · thought · говорить",
+        "thought · thought · знать"
+      ]
+    },
+    {
+      word: "take",
+      def: "took · taken · брать/занимать",
+      ctx: "She took the train.",
+      distractors: [
+        "took · took · брать/занимать",
+        "took · taken · отдавать",
+        "taked · taken · брать"
+      ]
+    }
+  ],
+
+  "Unit 2 – come / see / give / find": [
+    {
+      word: "come",
+      def: "came · come · приходить",
+      ctx: "She came to the office at nine.",
+      distractors: [
+        "came · came · приходить",
+        "came · come · уходить",
+        "comed · came · приходить"
+      ]
+    },
+    {
+      word: "see",
+      def: "saw · seen · видеть",
+      ctx: "I saw him at the station.",
+      distractors: [
+        "seed · seen · видеть",
+        "saw · saw · видеть",
+        "saw · seen · смотреть"
+      ]
+    },
+    {
+      word: "give",
+      def: "gave · given · давать",
+      ctx: "He gave me a book.",
+      distractors: [
+        "gived · given · давать",
+        "gave · gave · давать",
+        "gave · given · брать"
+      ]
+    },
+    {
+      word: "find",
+      def: "found · found · находить",
+      ctx: "I found my keys.",
+      distractors: [
+        "finded · founded · находить",
+        "found · found · терять",
+        "found · founded · находить"
+      ]
+    },
+    {
+      word: "tell",
+      def: "told · told · рассказывать/говорить",
+      ctx: "He told me a secret.",
+      distractors: [
+        "telled · told · говорить",
+        "told · told · говорить",
+        "told · told · спрашивать"
+      ]
+    },
+    {
+      word: "put",
+      def: "put · put · класть/ставить",
+      ctx: "Put the book on the table.",
+      distractors: [
+        "putted · putted · класть",
+        "put · put · брать",
+        "put · put · класть"
+      ]
+    },
+    {
+      word: "feel",
+      def: "felt · felt · чувствовать",
+      ctx: "She felt tired after work.",
+      distractors: [
+        "feeled · feeled · чувствовать",
+        "felt · felt · слышать",
+        "felt · felt · думать"
+      ]
+    },
+    {
+      word: "leave",
+      def: "left · left · уходить/оставлять",
+      ctx: "He left the company last year.",
+      distractors: [
+        "leaved · left · оставлять",
+        "left · left · приходить",
+        "left · lefted · уходить"
+      ]
+    },
+    {
+      word: "bring",
+      def: "brought · brought · приносить",
+      ctx: "Can you bring the documents?",
+      distractors: [
+        "bringed · brought · приносить",
+        "brought · brought · покупать",
+        "brought · bringed · приносить"
+      ]
+    },
+    {
+      word: "begin",
+      def: "began · begun · начинать",
+      ctx: "The meeting began at ten.",
+      distractors: [
+        "begun · began · начинать",
+        "began · began · начинать",
+        "began · begun · заканчивать"
+      ]
+    }
+  ],
+
+  "Unit 3 – speak / write / read / run": [
+    {
+      word: "speak",
+      def: "spoke · spoken · говорить",
+      ctx: "She spoke to the client.",
+      distractors: [
+        "speaked · spoken · говорить",
+        "spoke · spoke · говорить",
+        "spoke · spoken · слушать"
+      ]
+    },
+    {
+      word: "write",
+      def: "wrote · written · писать",
+      ctx: "I wrote a report.",
+      distractors: [
+        "writed · written · писать",
+        "wrote · wrote · писать",
+        "wrote · written · читать"
+      ]
+    },
+    {
+      word: "read",
+      def: "read · read · читать",
+      ctx: "Have you read this article?",
+      distractors: [
+        "readed · readed · читать",
+        "red · red · читать",
+        "read · read · писать"
+      ]
+    },
+    {
+      word: "run",
+      def: "ran · run · бежать/управлять",
+      ctx: "He ran the marathon.",
+      distractors: [
+        "runned · ran · бежать",
+        "ran · ran · бежать/управлять",
+        "ran · run · ходить"
+      ]
+    },
+    {
+      word: "meet",
+      def: "met · met · встречать",
+      ctx: "I met our new client today.",
+      distractors: [
+        "meeted · met · встречать",
+        "met · met · знакомиться",
+        "met · meet · встречать"
+      ]
+    },
+    {
+      word: "lose",
+      def: "lost · lost · терять/проигрывать",
+      ctx: "We lost the contract.",
+      distractors: [
+        "losed · lost · терять",
+        "lost · lost · искать",
+        "lost · losed · терять/проигрывать"
+      ]
+    },
+    {
+      word: "pay",
+      def: "paid · paid · платить",
+      ctx: "He paid for the meal.",
+      distractors: [
+        "payed · payed · платить",
+        "paid · paid · получать",
+        "payed · paid · платить"
+      ]
+    },
+    {
+      word: "send",
+      def: "sent · sent · отправлять",
+      ctx: "I sent the email already.",
+      distractors: [
+        "sended · sent · отправлять",
+        "sent · sent · получать",
+        "sent · sended · отправлять"
+      ]
+    },
+    {
+      word: "sell",
+      def: "sold · sold · продавать",
+      ctx: "They sold 500 units last month.",
+      distractors: [
+        "selled · sold · продавать",
+        "sold · sold · покупать",
+        "sold · selled · продавать"
+      ]
+    },
+    {
+      word: "sit",
+      def: "sat · sat · сидеть",
+      ctx: "She sat next to me.",
+      distractors: [
+        "sitted · sat · сидеть",
+        "sat · sat · стоять",
+        "sat · sit · сидеть"
+      ]
+    }
+  ],
+
+  "Unit 4 – buy / catch / choose / keep": [
+    {
+      word: "buy",
+      def: "bought · bought · покупать",
+      ctx: "We bought new laptops.",
+      distractors: [
+        "buyed · bought · покупать",
+        "bought · bought · продавать",
+        "brought · brought · покупать"
+      ]
+    },
+    {
+      word: "catch",
+      def: "caught · caught · поймать/успеть",
+      ctx: "I caught the early flight.",
+      distractors: [
+        "catched · caught · поймать",
+        "caught · caught · упустить",
+        "caught · catched · поймать/успеть"
+      ]
+    },
+    {
+      word: "choose",
+      def: "chose · chosen · выбирать",
+      ctx: "She chose the best candidate.",
+      distractors: [
+        "choosed · chosen · выбирать",
+        "chose · chose · выбирать",
+        "chose · chosen · решать"
+      ]
+    },
+    {
+      word: "keep",
+      def: "kept · kept · хранить/держать",
+      ctx: "Please keep this information confidential.",
+      distractors: [
+        "keeped · kept · держать",
+        "kept · kept · терять",
+        "kept · keeped · хранить/держать"
+      ]
+    },
+    {
+      word: "hold",
+      def: "held · held · держать/проводить",
+      ctx: "We held a meeting on Friday.",
+      distractors: [
+        "holded · held · держать",
+        "held · held · отпускать",
+        "held · holded · держать/проводить"
+      ]
+    },
+    {
+      word: "build",
+      def: "built · built · строить/создавать",
+      ctx: "They built a new factory.",
+      distractors: [
+        "builded · built · строить",
+        "built · built · разрушать",
+        "built · builded · строить/создавать"
+      ]
+    },
+    {
+      word: "cut",
+      def: "cut · cut · резать/сокращать",
+      ctx: "We cut costs by 20%.",
+      distractors: [
+        "cutted · cutted · сокращать",
+        "cut · cut · увеличивать",
+        "cut · cutted · резать"
+      ]
+    },
+    {
+      word: "let",
+      def: "let · let · разрешать/позволять",
+      ctx: "Let me explain.",
+      distractors: [
+        "letted · letted · позволять",
+        "let · let · запрещать",
+        "let · letted · разрешать"
+      ]
+    },
+    {
+      word: "set",
+      def: "set · set · устанавливать/задавать",
+      ctx: "We need to set a deadline.",
+      distractors: [
+        "setted · setted · устанавливать",
+        "set · set · отменять",
+        "set · setted · задавать"
+      ]
+    },
+    {
+      word: "hit",
+      def: "hit · hit · ударять/достигать",
+      ctx: "We hit our sales target.",
+      distractors: [
+        "hitted · hitted · достигать",
+        "hit · hit · пропускать",
+        "hit · hitted · ударять"
+      ]
+    }
+  ],
+
+  "Unit 5 – grow / show / spend / stand": [
+    {
+      word: "grow",
+      def: "grew · grown · расти/развивать",
+      ctx: "Revenue grew by 15%.",
+      distractors: [
+        "growed · grown · расти",
+        "grew · grew · расти/развивать",
+        "grew · grown · падать"
+      ]
+    },
+    {
+      word: "show",
+      def: "showed · shown · показывать",
+      ctx: "She showed me the report.",
+      distractors: [
+        "showed · showed · показывать",
+        "shown · shown · показывать",
+        "showed · shown · прятать"
+      ]
+    },
+    {
+      word: "spend",
+      def: "spent · spent · тратить/проводить время",
+      ctx: "We spent a lot on advertising.",
+      distractors: [
+        "spended · spent · тратить",
+        "spent · spent · зарабатывать",
+        "spent · spended · тратить/проводить"
+      ]
+    },
+    {
+      word: "stand",
+      def: "stood · stood · стоять/терпеть",
+      ctx: "I stood outside the office.",
+      distractors: [
+        "standed · stood · стоять",
+        "stood · stood · сидеть",
+        "stood · standed · терпеть"
+      ]
+    },
+    {
+      word: "understand",
+      def: "understood · understood · понимать",
+      ctx: "Did you understand the contract?",
+      distractors: [
+        "understanded · understood · понимать",
+        "understood · understood · объяснять",
+        "understood · understanded · понимать"
+      ]
+    },
+    {
+      word: "win",
+      def: "won · won · побеждать/выигрывать",
+      ctx: "We won the contract.",
+      distractors: [
+        "winned · won · победить",
+        "won · won · проигрывать",
+        "won · winned · побеждать"
+      ]
+    },
+    {
+      word: "drive",
+      def: "drove · driven · водить/управлять",
+      ctx: "She drove to the client's office.",
+      distractors: [
+        "drived · driven · водить",
+        "drove · drove · водить/управлять",
+        "drove · driven · идти пешком"
+      ]
+    },
+    {
+      word: "lead",
+      def: "led · led · вести/руководить",
+      ctx: "He led the project team.",
+      distractors: [
+        "leaded · led · руководить",
+        "led · led · следовать",
+        "led · leaded · вести"
+      ]
+    },
+    {
+      word: "wear",
+      def: "wore · worn · носить/надевать",
+      ctx: "She wore a suit to the interview.",
+      distractors: [
+        "weared · worn · носить",
+        "wore · wore · надевать",
+        "wore · worn · снимать"
+      ]
+    },
+    {
+      word: "forget",
+      def: "forgot · forgotten · забывать",
+      ctx: "I forgot to send the email.",
+      distractors: [
+        "forgeted · forgotten · забыть",
+        "forgot · forgot · забывать",
+        "forgot · forgotten · помнить"
+      ]
+    }
+  ],
+
+  "Unit 6 – break / fall / rise / throw": [
+    {
+      word: "break",
+      def: "broke · broken · ломать/нарушать",
+      ctx: "The deal broke down at the last minute.",
+      distractors: [
+        "breaked · broken · ломать",
+        "broke · broke · ломать/нарушать",
+        "broke · broken · чинить"
+      ]
+    },
+    {
+      word: "fall",
+      def: "fell · fallen · падать",
+      ctx: "Prices fell sharply last quarter.",
+      distractors: [
+        "falled · fallen · падать",
+        "fell · fell · падать",
+        "fell · fallen · расти"
+      ]
+    },
+    {
+      word: "rise",
+      def: "rose · risen · подниматься/повышаться",
+      ctx: "Sales rose by 30%.",
+      distractors: [
+        "rised · risen · повышаться",
+        "rose · rose · подниматься",
+        "rose · risen · снижаться"
+      ]
+    },
+    {
+      word: "throw",
+      def: "threw · thrown · бросать",
+      ctx: "He threw the old files away.",
+      distractors: [
+        "throwed · thrown · бросать",
+        "threw · threw · бросать",
+        "threw · thrown · поднимать"
+      ]
+    },
+    {
+      word: "fly",
+      def: "flew · flown · летать",
+      ctx: "She flew to New York for the conference.",
+      distractors: [
+        "flied · flown · летать",
+        "flew · flew · летать",
+        "flew · flown · плыть"
+      ]
+    },
+    {
+      word: "draw",
+      def: "drew · drawn · рисовать/привлекать",
+      ctx: "We drew a lot of attention.",
+      distractors: [
+        "drawed · drawn · рисовать",
+        "drew · drew · рисовать/привлекать",
+        "drew · drawn · отталкивать"
+      ]
+    },
+    {
+      word: "steal",
+      def: "stole · stolen · красть",
+      ctx: "Someone stole the laptop.",
+      distractors: [
+        "stealed · stolen · красть",
+        "stole · stole · красть",
+        "stole · stolen · находить"
+      ]
+    },
+    {
+      word: "freeze",
+      def: "froze · frozen · замораживать",
+      ctx: "The company froze all hiring.",
+      distractors: [
+        "freezed · frozen · замораживать",
+        "froze · froze · замораживать",
+        "froze · frozen · размораживать"
+      ]
+    },
+    {
+      word: "wake",
+      def: "woke · woken · просыпаться",
+      ctx: "I woke up very early.",
+      distractors: [
+        "waked · woken · просыпаться",
+        "woke · woke · просыпаться",
+        "woke · woken · засыпать"
+      ]
+    },
+    {
+      word: "swim",
+      def: "swam · swum · плавать",
+      ctx: "She swam across the lake.",
+      distractors: [
+        "swimmed · swum · плавать",
+        "swam · swam · плавать",
+        "swum · swum · плавать"
+      ]
+    }
+  ],
+
+  "Unit 7 – eat / drink / sleep / hear": [
+    {
+      word: "eat",
+      def: "ate · eaten · есть/кушать",
+      ctx: "We ate lunch together.",
+      distractors: [
+        "eated · eaten · кушать",
+        "ate · ate · есть/кушать",
+        "ate · eaten · пить"
+      ]
+    },
+    {
+      word: "drink",
+      def: "drank · drunk · пить",
+      ctx: "He drank too much coffee.",
+      distractors: [
+        "drinked · drunk · пить",
+        "drank · drank · пить",
+        "drunk · drunk · есть"
+      ]
+    },
+    {
+      word: "sleep",
+      def: "slept · slept · спать",
+      ctx: "I slept only five hours.",
+      distractors: [
+        "sleeped · slept · спать",
+        "slept · slept · бодрствовать",
+        "slept · sleeped · спать"
+      ]
+    },
+    {
+      word: "hear",
+      def: "heard · heard · слышать",
+      ctx: "I heard the news this morning.",
+      distractors: [
+        "heared · heard · слышать",
+        "heard · heard · видеть",
+        "heard · heared · слушать"
+      ]
+    },
+    {
+      word: "mean",
+      def: "meant · meant · значить/иметь в виду",
+      ctx: "What did you mean?",
+      distractors: [
+        "meaned · meant · значить",
+        "meant · meant · говорить",
+        "meant · meaned · понимать"
+      ]
+    },
+    {
+      word: "lend",
+      def: "lent · lent · одалживать (давать)",
+      ctx: "Can you lend me a pen?",
+      distractors: [
+        "lended · lent · давать",
+        "lent · lent · занимать (брать)",
+        "lent · lended · одалживать"
+      ]
+    },
+    {
+      word: "deal",
+      def: "dealt · dealt · иметь дело/заниматься",
+      ctx: "She dealt with all the complaints.",
+      distractors: [
+        "dealed · dealt · заниматься",
+        "dealt · dealt · избегать",
+        "dealt · dealed · иметь дело"
+      ]
+    },
+    {
+      word: "feed",
+      def: "fed · fed · кормить",
+      ctx: "We need to feed data into the system.",
+      distractors: [
+        "feeded · fed · кормить",
+        "fed · fed · голодать",
+        "fed · feeded · загружать"
+      ]
+    },
+    {
+      word: "hide",
+      def: "hid · hidden · прятать/скрывать",
+      ctx: "He hid the information.",
+      distractors: [
+        "hided · hidden · прятать",
+        "hid · hid · скрывать",
+        "hid · hidden · показывать"
+      ]
+    },
+    {
+      word: "lay",
+      def: "laid · laid · класть/укладывать",
+      ctx: "He laid the files on the desk.",
+      distractors: [
+        "layed · laid · класть",
+        "laid · laid · лежать",
+        "laid · layed · укладывать"
+      ]
+    }
+  ],
+
+  "Unit 8 – rise / hit / short forms": [
+    {
+      word: "let",
+      def: "let · let · позволять",
+      ctx: "She let me use her office.",
+      distractors: [
+        "letted · letted · позволять",
+        "let · let · запрещать",
+        "let · letted · разрешить"
+      ]
+    },
+    {
+      word: "bet",
+      def: "bet · bet · держать пари",
+      ctx: "I bet you can't finish it today.",
+      distractors: [
+        "betted · betted · держать пари",
+        "bet · bet · проигрывать",
+        "bet · betted · обещать"
+      ]
+    },
+    {
+      word: "burst",
+      def: "burst · burst · взрываться/лопаться",
+      ctx: "The pipe burst last night.",
+      distractors: [
+        "bursted · bursted · взорваться",
+        "burst · burst · чинить",
+        "burst · bursted · лопаться"
+      ]
+    },
+    {
+      word: "cost",
+      def: "cost · cost · стоить",
+      ctx: "The project cost more than expected.",
+      distractors: [
+        "costed · costed · стоить",
+        "cost · cost · сэкономить",
+        "cost · costed · стоить"
+      ]
+    },
+    {
+      word: "fit",
+      def: "fit · fit · подходить по размеру",
+      ctx: "The solution fit our needs perfectly.",
+      distractors: [
+        "fitted · fitted · подходить",
+        "fit · fit · не подходить",
+        "fit · fitted · подходить по размеру"
+      ]
+    },
+    {
+      word: "hurt",
+      def: "hurt · hurt · причинять боль/вредить",
+      ctx: "Budget cuts hurt the team.",
+      distractors: [
+        "hurted · hurted · вредить",
+        "hurt · hurt · помогать",
+        "hurt · hurted · болеть"
+      ]
+    },
+    {
+      word: "spread",
+      def: "spread · spread · распространять/расширять",
+      ctx: "The news spread quickly.",
+      distractors: [
+        "spreaded · spread · распространять",
+        "spread · spread · сдерживать",
+        "spread · spreaded · расширять"
+      ]
+    },
+    {
+      word: "split",
+      def: "split · split · разделять/раскалывать",
+      ctx: "We split the project into two phases.",
+      distractors: [
+        "splitted · splitted · разделять",
+        "split · split · объединять",
+        "split · splitted · делить"
+      ]
+    },
+    {
+      word: "beat",
+      def: "beat · beaten · бить/побеждать",
+      ctx: "We beat all competitors this year.",
+      distractors: [
+        "beated · beaten · победить",
+        "beat · beat · побеждать",
+        "beat · beaten · проигрывать"
+      ]
+    },
+    {
+      word: "swing",
+      def: "swung · swung · качаться/колебаться",
+      ctx: "Opinion swung in our favour.",
+      distractors: [
+        "swinged · swung · колебаться",
+        "swung · swung · оставаться стабильным",
+        "swang · swung · качаться"
+      ]
+    }
+  ]
+
+};
+
+// ─────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────
+let progress = {};
+let currentUnit = null;
+let quizQueue = [];
+let quizIndex = 0;
+let currentItem = null;
+let sessionStats = { easy: 0, medium: 0, hard: 0, correct: 0, total: 0 };
+let hardWords = [];
+let quizMode = 'unit';
+
+const units = Object.keys(VOCAB);
+
+function saveProgress() {
+  try { localStorage.setItem('irr_quiz_progress', JSON.stringify(progress)); } catch(e) {}
+}
+function loadProgress() {
+  try { const s = localStorage.getItem('irr_quiz_progress'); if (s) progress = JSON.parse(s); } catch(e) {}
+}
+function getWordKey(unit, word) { return unit + '::' + word; }
+function isLearned(key) { return progress[key] && progress[key].level > 0; }
+function isDue(key) {
+  if (!progress[key]) return false;
+  return progress[key].nextDue <= Date.now();
+}
+function getInterval(level) {
+  const days = [0, 1, 3, 7, 14, 30];
+  return days[Math.min(level, 5)];
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function renderHome() {
+  const container = document.getElementById('unit-grid-container');
+  container.innerHTML = '';
+  units.forEach(unitName => {
+    const items = VOCAB[unitName];
+    const learned = items.filter(item => isLearned(getWordKey(unitName, item.word))).length;
+    const pct = Math.round((learned / items.length) * 100);
+
+    const card = document.createElement('div');
+    card.className = 'unit-card';
+    card.innerHTML = `
+      <div class="unit-num">Unit ${unitName.split(' – ')[0].replace('Unit ', '')}</div>
+      <div class="unit-name">${unitName.split(' – ')[1] || unitName}</div>
+      <div class="unit-prog"><div class="unit-bar" style="width:${pct}%"></div></div>
+      <div class="unit-count">${learned}/${items.length} learned</div>
+    `;
+    card.onclick = () => startUnit(unitName);
+    container.appendChild(card);
+  });
+}
+
+function goHome() {
+  showScreen('screen-home');
+  renderHome();
+}
+
+function startUnit(unitName) {
+  currentUnit = unitName;
+  quizMode = 'unit';
+  quizQueue = shuffle([...VOCAB[unitName]].map(item => ({ ...item, _unit: unitName })));
+  sessionStats = { easy: 0, medium: 0, hard: 0, correct: 0, total: 0 };
+  hardWords = [];
+  quizIndex = 0;
+  document.getElementById('quiz-title').textContent = unitName;
+  showScreen('screen-quiz');
+  showQuestion();
+}
+
+function startReview() {
+  quizMode = 'review';
+  quizQueue = [];
+  units.forEach(unit => {
+    VOCAB[unit].forEach(item => {
+      const key = getWordKey(unit, item.word);
+      if (isDue(key)) quizQueue.push({ ...item, _unit: unit });
+    });
+  });
+  if (quizQueue.length === 0) {
+    alert('No verbs due for review right now. Come back later or practice all learned verbs.');
+    return;
+  }
+  quizQueue = shuffle(quizQueue);
+  sessionStats = { easy: 0, medium: 0, hard: 0, correct: 0, total: 0 };
+  hardWords = [];
+  quizIndex = 0;
+  document.getElementById('quiz-title').textContent = 'Review';
+  showScreen('screen-quiz');
+  showQuestion();
+}
+
+function startAll() {
+  quizMode = 'all';
+  quizQueue = [];
+  units.forEach(unit => {
+    VOCAB[unit].forEach(item => {
+      const key = getWordKey(unit, item.word);
+      if (isLearned(key)) quizQueue.push({ ...item, _unit: unit });
+    });
+  });
+  if (quizQueue.length === 0) {
+    alert('No learned verbs yet. Start with a unit first.');
+    return;
+  }
+  quizQueue = shuffle(quizQueue);
+  sessionStats = { easy: 0, medium: 0, hard: 0, correct: 0, total: 0 };
+  hardWords = [];
+  quizIndex = 0;
+  document.getElementById('quiz-title').textContent = 'All verbs';
+  showScreen('screen-quiz');
+  showQuestion();
+}
+
+function retryHard() {
+  if (hardWords.length === 0) { goHome(); return; }
+  quizQueue = shuffle([...hardWords]);
+  hardWords = [];
+  sessionStats = { easy: 0, medium: 0, hard: 0, correct: 0, total: 0 };
+  quizIndex = 0;
+  showScreen('screen-quiz');
+  showQuestion();
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function showQuestion() {
+  if (quizIndex >= quizQueue.length) { showResults(); return; }
+  currentItem = quizQueue[quizIndex];
+  const pct = Math.round((quizIndex / quizQueue.length) * 100);
+  document.getElementById('quiz-progress-fill').style.width = pct + '%';
+  document.getElementById('quiz-subtitle').textContent = `Question ${quizIndex + 1} of ${quizQueue.length}`;
+  document.getElementById('quiz-word').textContent = currentItem.word;
+  document.getElementById('quiz-context').textContent = currentItem.ctx || '';
+  document.getElementById('quiz-reveal').style.display = 'none';
+  document.getElementById('quiz-hint').textContent = '';
+  document.getElementById('options-area').style.display = 'block';
+  document.getElementById('rate-area').style.display = 'none';
+
+  // Build 4 options: correct + 3 distractors (shuffled)
+  const opts = shuffle([currentItem.def, ...currentItem.distractors]);
+  const grid = document.getElementById('options-grid');
+  grid.innerHTML = '';
+  opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.textContent = opt;
+    btn.onclick = () => selectOption(btn, opt === currentItem.def);
+    grid.appendChild(btn);
+  });
+}
+
+function selectOption(btn, isCorrect) {
+  document.querySelectorAll('.opt').forEach(b => {
+    b.disabled = true;
+    if (b.textContent === currentItem.def) b.classList.add('correct');
+  });
+  if (!isCorrect) btn.classList.add('wrong');
+  sessionStats.total++;
+  if (isCorrect) sessionStats.correct++;
+
+  const rev = document.getElementById('quiz-reveal');
+  rev.textContent = '✓ ' + currentItem.def;
+  rev.style.display = 'block';
+
+  document.getElementById('options-area').style.display = 'none';
+  document.getElementById('rate-area').style.display = 'block';
+
+  const key = getWordKey(currentItem._unit || currentUnit, currentItem.word);
+  if (!progress[key]) progress[key] = { level: 0, nextDue: 0 };
+}
+
+function rate(r) {
+  const key = getWordKey(currentItem._unit || currentUnit, currentItem.word);
+  if (!progress[key]) progress[key] = { level: 0 };
+  let level = progress[key].level || 0;
+  if (r === 3) { level = Math.min(level + 2, 5); sessionStats.easy++; }
+  else if (r === 2) { level = Math.min(level + 1, 5); sessionStats.medium++; }
+  else { level = Math.max(level - 1, 0); sessionStats.hard++; hardWords.push(currentItem); }
+  const days = getInterval(level);
+  progress[key] = { level, nextDue: Date.now() + days * 864e5 };
+  saveProgress();
+  quizIndex++;
+  showQuestion();
+}
+
+function showResults() {
+  const s = sessionStats;
+  document.getElementById('results-unit-label').textContent = document.getElementById('quiz-title').textContent + ' complete';
+  document.getElementById('results-score').textContent = s.correct + '/' + s.total;
+  document.getElementById('rb-easy').textContent = s.easy;
+  document.getElementById('rb-medium').textContent = s.medium;
+  document.getElementById('rb-hard').textContent = s.hard;
+
+  let dueMsg = 'Hard words will appear again next session.';
+  if (s.easy > 0) dueMsg = 'Easy verbs: review in 7 days. Hard verbs: review tomorrow.';
+  document.getElementById('next-due-msg').textContent = dueMsg;
+
+  const retryBtn = document.getElementById('retry-btn');
+  if (hardWords.length === 0) {
+    retryBtn.style.display = 'none';
+  } else {
+    retryBtn.style.display = 'block';
+    retryBtn.textContent = `Retry ${hardWords.length} hard verb${hardWords.length > 1 ? 's' : ''}`;
+  }
+  showScreen('screen-results');
+}
+
+loadProgress();
+renderHome();
+</script>
+</body>
+</html>
