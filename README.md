@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -8,5 +7,4 @@
   <h1>Welcome to my website!</h1>
   <p>My materials:</p>
 </body>
-</html>
-<a href="История и Законы.html">История и Законы</a>
+</html> <a href="История и Законы.html">История и Законы</a>
