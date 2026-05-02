@@ -18,5 +18,3 @@
      style="display:inline-block; padding:12px 24px; background:#c9a84c; color:#000; text-decoration:none; font-family:sans-serif;">
     GRANDECO
   </a>
-</body>
-</html>
