@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Hub | Russian · English · Chinese</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(145deg, #f5f7fc 0%, #eef2f7 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            text-align: center;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .subhead {
+            text-align: center;
+            color: #4a627a;
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            border-bottom: 2px solid #dce5f0;
+            display: inline-block;
+            width: auto;
+            margin-left: auto;
+            margin-right: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(2px);
+            border-radius: 2rem;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 40px -12px rgba(0, 0, 0, 0.2);
+            background: white;
+        }
+
+        .card a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .flag {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .language {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e2f41;
+            margin-bottom: 0.5rem;
+        }
+
+        .lang-code {
+            display: inline-block;
+            background: #e9edf2;
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #2c3e66;
+            margin-bottom: 1rem;
+        }
+
+        .description {
+            color: #4a5b6e;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        hr {
+            margin: 1rem 0;
+            border: none;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #cbd5e1, transparent);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            font-size: 0.8rem;
+            color: #6c86a3;
+        }
+
+        @media (max-width: 680px) {
+            body {
+                padding: 1rem;
+            }
+            h1 {
+                font-size: 2.2rem;
+            }
+            .language {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>📚 Language Hub</h1>
+    <div style="text-align: center;">
+        <div class="subhead">Choose your language – interactive tools & resources</div>
+    </div>
+
+    <div class="cards-grid">
+        <!-- Russian section -->
+        <div class="card">
+            <a href="russian.html">
+                <div class="flag">🇷🇺</div>
+                <div class="language">Russian</div>
+                <div class="lang-code">Русский</div>
+                <div class="description">
+                    Full web‑application for learning Russian<br>
+                    <strong>Interactive & ready to use</strong>
+                </div>
+            </a>
+        </div>
+
+        <!-- English section – now shows "ENG" instead of "EN" or "GB" -->
+        <div class="card">
+            <a href="english.html">
+                <div class="flag">🇬🇧</div>
+                <div class="language">English</div>
+                <div class="lang-code">ENG</div>
+                <div class="description">
+                    Materials, exercises, and grammar guides<br>
+                    For all levels (A1–C1)
+                </div>
+            </a>
+        </div>
+
+        <!-- Chinese section -->
+        <div class="card">
+            <a href="chinese.html">
+                <div class="flag">🇨🇳</div>
+                <div class="language">Chinese</div>
+                <div class="lang-code">中文</div>
+                <div class="description">
+                    Mandarin resources, characters & listening<br>
+                    HSK preparation tools
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <footer>
+        <p>🔗 Click any card to open the dedicated section. <br>
+        Russian sub‑page contains your full HTML application.</p>
+    </footer>
+</div>
+</body>
+</html>
