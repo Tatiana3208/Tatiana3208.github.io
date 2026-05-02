@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Russian | Language Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, initial-scale=1.0, viewport-fit=cover">
+    <title>Русский язык | GRANDECO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -12,139 +14,259 @@
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background: #f9f6f0;
-            color: #2c3e2f;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f4f0fa 0%, #e8eef5 100%);
+            color: #1a2a3a;
+            scroll-behavior: smooth;
             line-height: 1.5;
         }
 
+        /* Glassmorphism effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+        }
+
         .container {
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 0 auto;
             padding: 2rem 1.5rem;
         }
 
-        /* header & navigation */
+        /* Header & Navigation */
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 1rem;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #e2d4c0;
+            margin-bottom: 2.5rem;
+            padding: 1rem 1.5rem;
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(8px);
+            border-radius: 4rem;
+            border: 1px solid rgba(255, 255, 255, 0.6);
         }
 
         .back-link {
-            background: #d9c5a7;
-            padding: 0.5rem 1.2rem;
-            border-radius: 40px;
+            background: #2c3e50;
+            color: white;
+            padding: 0.6rem 1.3rem;
+            border-radius: 3rem;
             text-decoration: none;
-            color: #3b2a1f;
             font-weight: 600;
-            transition: 0.2s;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .back-link:hover {
-            background: #bfa27b;
-            color: white;
+            background: #e67e22;
+            transform: translateX(-4px);
+            box-shadow: 0 8px 20px rgba(230, 126, 34, 0.3);
         }
 
         h1 {
             font-size: 2.5rem;
-            background: linear-gradient(135deg, #9b4b2e, #6b3a1f);
+            font-weight: 800;
+            background: linear-gradient(135deg, #2c3e50, #e67e22);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
-        }
-
-        /* sections grid */
-        .sections-grid {
             display: flex;
-            flex-direction: column;
-            gap: 2.5rem;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .section-card {
-            background: white;
-            border-radius: 2rem;
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-            border: 1px solid #efe0cf;
+        /* Tabs Styling */
+        .tabs-container {
+            margin: 2rem 0;
         }
 
-        .section-header {
-            background: #fdf7ef;
-            padding: 1rem 1.8rem;
-            border-bottom: 2px solid #e7d5be;
+        .tab-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid rgba(44, 62, 80, 0.15);
+            padding-bottom: 0.5rem;
         }
 
-        .section-header h2 {
-            font-size: 1.6rem;
-            color: #5a3a24;
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 0.8rem 1.8rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #4a627a;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 3rem;
+            font-family: 'Inter', sans-serif;
             display: flex;
             align-items: center;
             gap: 0.6rem;
         }
 
-        .section-content {
+        .tab-btn i {
+            font-size: 1.1rem;
+        }
+
+        .tab-btn:hover {
+            background: rgba(230, 126, 34, 0.1);
+            color: #e67e22;
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+            color: white;
+            box-shadow: 0 6px 14px rgba(230, 126, 34, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Sections inside tabs */
+        .info-section {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            border-radius: 1.5rem;
             padding: 1.8rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.6);
         }
 
-        /* web app iframe */
-        .webapp-frame {
-            width: 100%;
-            min-height: 600px;
-            border: none;
-            border-radius: 1.2rem;
-            background: #fefaf5;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        .info-section h3 {
+            font-size: 1.4rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            border-left: 4px solid #e67e22;
+            padding-left: 1rem;
         }
 
-        /* other section content styling */
         .info-list {
             list-style: none;
         }
+
         .info-list li {
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.8rem;
             padding-left: 1.8rem;
             position: relative;
         }
+
         .info-list li:before {
             content: "📌";
             position: absolute;
             left: 0;
-            color: #b87a4b;
+            color: #e67e22;
+        }
+
+        /* Web Application Card */
+        .webapp-card {
+            background: white;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2d4c0;
+        }
+
+        .webapp-header {
+            background: linear-gradient(135deg, #2c3e50, #1a2a3a);
+            padding: 1rem 1.8rem;
+            color: white;
+        }
+
+        .webapp-header h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .webapp-frame {
+            width: 100%;
+            min-height: 600px;
+            border: none;
+            background: #fefaf5;
         }
 
         .resource-link {
-            display: inline-block;
-            margin-top: 1rem;
-            background: #ede3d5;
-            padding: 0.5rem 1rem;
-            border-radius: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #e67e22;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 2rem;
             text-decoration: none;
-            color: #5a3a24;
             font-weight: 500;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .resource-link:hover {
+            background: #d35400;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(230, 126, 34, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #e67e22;
+            color: #e67e22;
+        }
+
+        .btn-outline:hover {
+            background: #e67e22;
+            color: white;
         }
 
         footer {
-            margin-top: 3rem;
             text-align: center;
-            font-size: 0.8rem;
-            color: #a18364;
+            margin-top: 3rem;
+            padding: 1.5rem;
+            font-size: 0.85rem;
+            color: #5a6e7a;
+            border-top: 1px solid rgba(44, 62, 80, 0.1);
         }
 
-        @media (max-width: 680px) {
+        @media (max-width: 768px) {
             .container {
                 padding: 1rem;
             }
             h1 {
                 font-size: 1.8rem;
             }
-            .section-header h2 {
-                font-size: 1.3rem;
+            .tab-btn {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
             }
             .webapp-frame {
                 min-height: 450px;
@@ -153,63 +275,107 @@
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="top-bar">
-        <a href="index.html" class="back-link">← Back to main page</a>
-        <h1>🇷🇺 Russian</h1>
-        <div style="width: 80px;"></div> <!-- spacer for alignment -->
+    <div class="container">
+        <div class="top-bar">
+            <a href="index.html" class="back-link">
+                <i class="fas fa-arrow-left"></i> На главную
+            </a>
+            <h1>
+                <i class="fas fa-language"></i> Русский язык
+            </h1>
+            <div style="width: 80px;"></div>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="tabs-container">
+            <div class="tab-buttons">
+                <button class="tab-btn active" data-tab="info">
+                    <i class="fas fa-info-circle"></i> О языке
+                </button>
+                <button class="tab-btn" data-tab="laws">
+                    <i class="fas fa-gavel"></i> История и Законы
+                </button>
+                <button class="tab-btn" data-tab="resources">
+                    <i class="fas fa-book-open"></i> Ресурсы
+                </button>
+            </div>
+
+            <!-- Tab 1: Information -->
+            <div id="info" class="tab-content active">
+                <div class="info-section">
+                    <h3><i class="fas fa-globe"></i> Общая информация</h3>
+                    <p>Русский язык — восточнославянский язык, национальный язык русского народа. Один из самых распространённых языков мира — шестой по общей численности говорящих и восьмой по численности владеющих им как родным. Русский является официальным языком России, Беларуси, Казахстана, Кыргызстана, а также многих международных организаций.</p>
+                </div>
+
+                <div class="info-section">
+                    <h3><i class="fas fa-chart-line"></i> Интересные факты</h3>
+                    <ul class="info-list">
+                        <li>Алфавит: 33 буквы (кириллица)</li>
+                        <li>Грамматика: 6 падежей, 3 рода, глагольные виды</li>
+                        <li>Носители: более 250 миллионов человек</li>
+                        <li>Пятый по распространённости язык в Интернете</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Tab 2: History & Laws (Web Application) -->
+            <div id="laws" class="tab-content">
+                <div class="webapp-card">
+                    <div class="webapp-header">
+                        <h3>
+                            <i class="fas fa-landmark"></i> История и Законы России
+                        </h3>
+                    </div>
+                    <!-- Your existing history.html is loaded here inside an iframe -->
+                    <iframe class="webapp-frame" src="history.html" title="История и Законы России"></iframe>
+                </div>
+                <p style="margin-top: 1rem; font-size: 0.85rem; color: #6b5a4a; text-align: center;">
+                    <i class="fas fa-info-circle"></i> Интерактивное приложение. Если приложение не загрузилось, убедитесь, что файл <code>history.html</code> находится в той же папке.
+                </p>
+            </div>
+
+            <!-- Tab 3: Resources -->
+            <div id="resources" class="tab-content">
+                <div class="info-section">
+                    <h3><i class="fas fa-podcast"></i> Рекомендуемые ресурсы</h3>
+                    <ul class="info-list">
+                        <li>Подкасты: «Russian with Max», «Speaking Russian»</li>
+                        <li>YouTube каналы: «Russian Progress», «Be Fluent in Russian»</li>
+                        <li>Грамматические таблицы и упражнения (PDF доступны)</li>
+                        <li>Видеоуроки: алфавит, произношение, базовые диалоги</li>
+                    </ul>
+                    <a href="#" class="resource-link">
+                        <i class="fas fa-download"></i> Скачать грамматический справочник
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>🇷🇺 Изучайте русский язык с комфортом | Все материалы обновляются регулярно</p>
+        </footer>
     </div>
 
-    <div class="sections-grid">
+    <script>
+        // Simple tabs functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const contents = document.querySelectorAll('.tab-content');
 
-        <!-- Section 1: About Russian language -->
-        <div class="section-card">
-            <div class="section-header">
-                <h2>📖 About Russian</h2>
-            </div>
-            <div class="section-content">
-                <p>Russian is an East Slavic language spoken by over 250 million people worldwide. It uses the Cyrillic alphabet and is known for its rich literature, complex grammar, and melodic intonation.</p>
-                <ul class="info-list" style="margin-top: 1rem;">
-                    <li>Alphabet: 33 letters (Cyrillic)</li>
-                    <li>Grammar: 6 cases, verb aspects, movable stress</li>
-                    <li>Native to: Russia, Belarus, Kazakhstan, Kyrgyzstan</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Section 2: Russian Web Application (history.html) -->
-        <div class="section-card">
-            <div class="section-header">
-                <h2>🖥️ Interactive Web Application</h2>
-            </div>
-            <div class="section-content">
-                <p>Use the tool below to explore Russian history, vocabulary, or exercises – your custom web app is embedded here.</p>
-                <!-- The iframe loads your existing history.html file -->
-                <iframe class="webapp-frame" src="history.html" title="Russian web application"></iframe>
-                <p style="margin-top: 0.8rem; font-size: 0.85rem; color: #6b5a4a;">💡 The app above is fully interactive. If you see a blank area, make sure <code>history.html</code> is uploaded to the same repository.</p>
-            </div>
-        </div>
-
-        <!-- Section 3: Additional learning resources -->
-        <div class="section-card">
-            <div class="section-header">
-                <h2>📚 Recommended resources</h2>
-            </div>
-            <div class="section-content">
-                <ul class="info-list">
-                    <li>Podcasts: "Russian with Max", "Speaking Russian"</li>
-                    <li>Grammar tables & exercises (PDFs coming soon)</li>
-                    <li>Video lessons – alphabet, pronunciation, basic dialogues</li>
-                </ul>
-                <a href="#" class="resource-link">📥 Download grammar cheat sheet (placeholder)</a>
-            </div>
-        </div>
-
-    </div>
-
-    <footer>
-        <p>🔗 Russian language hub – your web app is ready inside the interactive section.</p>
-    </footer>
-</div>
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const targetId = tab.getAttribute('data-tab');
+                    
+                    // Remove active class from all tabs and contents
+                    tabs.forEach(t => t.classList.remove('active'));
+                    contents.forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to current tab and corresponding content
+                    tab.classList.add('active');
+                    document.getElementById(targetId).classList.add('active');
+                });
+            });
+        });
+    </script>
 </body>
 </html>
