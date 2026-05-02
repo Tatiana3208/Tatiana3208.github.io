@@ -2,11 +2,214 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Russian | Language Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f9f6f0;
+            color: #2c3e2f;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* header & navigation */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e2d4c0;
+        }
+
+        .back-link {
+            background: #d9c5a7;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #3b2a1f;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .back-link:hover {
+            background: #bfa27b;
+            color: white;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #9b4b2e, #6b3a1f);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        /* sections grid */
+        .sections-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+
+        .section-card {
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            border: 1px solid #efe0cf;
+        }
+
+        .section-header {
+            background: #fdf7ef;
+            padding: 1rem 1.8rem;
+            border-bottom: 2px solid #e7d5be;
+        }
+
+        .section-header h2 {
+            font-size: 1.6rem;
+            color: #5a3a24;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .section-content {
+            padding: 1.8rem;
+        }
+
+        /* web app iframe */
+        .webapp-frame {
+            width: 100%;
+            min-height: 600px;
+            border: none;
+            border-radius: 1.2rem;
+            background: #fefaf5;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        /* other section content styling */
+        .info-list {
+            list-style: none;
+        }
+        .info-list li {
+            margin-bottom: 0.75rem;
+            padding-left: 1.8rem;
+            position: relative;
+        }
+        .info-list li:before {
+            content: "📌";
+            position: absolute;
+            left: 0;
+            color: #b87a4b;
+        }
+
+        .resource-link {
+            display: inline-block;
+            margin-top: 1rem;
+            background: #ede3d5;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            text-decoration: none;
+            color: #5a3a24;
+            font-weight: 500;
+        }
+
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #a18364;
+        }
+
+        @media (max-width: 680px) {
+            .container {
+                padding: 1rem;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .section-header h2 {
+                font-size: 1.3rem;
+            }
+            .webapp-frame {
+                min-height: 450px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Russian Section</h1>
-    <p>Content coming soon.</p>
-    <a href="index.html">← Back to main page</a>
+<div class="container">
+    <div class="top-bar">
+        <a href="index.html" class="back-link">← Back to main page</a>
+        <h1>🇷🇺 Russian</h1>
+        <div style="width: 80px;"></div> <!-- spacer for alignment -->
+    </div>
+
+    <div class="sections-grid">
+
+        <!-- Section 1: About Russian language -->
+        <div class="section-card">
+            <div class="section-header">
+                <h2>📖 About Russian</h2>
+            </div>
+            <div class="section-content">
+                <p>Russian is an East Slavic language spoken by over 250 million people worldwide. It uses the Cyrillic alphabet and is known for its rich literature, complex grammar, and melodic intonation.</p>
+                <ul class="info-list" style="margin-top: 1rem;">
+                    <li>Alphabet: 33 letters (Cyrillic)</li>
+                    <li>Grammar: 6 cases, verb aspects, movable stress</li>
+                    <li>Native to: Russia, Belarus, Kazakhstan, Kyrgyzstan</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 2: Russian Web Application (history.html) -->
+        <div class="section-card">
+            <div class="section-header">
+                <h2>🖥️ Interactive Web Application</h2>
+            </div>
+            <div class="section-content">
+                <p>Use the tool below to explore Russian history, vocabulary, or exercises – your custom web app is embedded here.</p>
+                <!-- The iframe loads your existing history.html file -->
+                <iframe class="webapp-frame" src="history.html" title="Russian web application"></iframe>
+                <p style="margin-top: 0.8rem; font-size: 0.85rem; color: #6b5a4a;">💡 The app above is fully interactive. If you see a blank area, make sure <code>history.html</code> is uploaded to the same repository.</p>
+            </div>
+        </div>
+
+        <!-- Section 3: Additional learning resources -->
+        <div class="section-card">
+            <div class="section-header">
+                <h2>📚 Recommended resources</h2>
+            </div>
+            <div class="section-content">
+                <ul class="info-list">
+                    <li>Podcasts: "Russian with Max", "Speaking Russian"</li>
+                    <li>Grammar tables & exercises (PDFs coming soon)</li>
+                    <li>Video lessons – alphabet, pronunciation, basic dialogues</li>
+                </ul>
+                <a href="#" class="resource-link">📥 Download grammar cheat sheet (placeholder)</a>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>🔗 Russian language hub – your web app is ready inside the interactive section.</p>
+    </footer>
+</div>
 </body>
 </html>
