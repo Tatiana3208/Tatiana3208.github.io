@@ -301,9 +301,19 @@
     font-size: clamp(18px, 3vw, 26px);
     font-weight: 400;
     line-height: 1.5;
-    margin-bottom: 40px;
+    margin-bottom: 6px;
     margin-top: 20px;
     color: var(--text);
+  }
+
+  .question-translation {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: clamp(13px, 2vw, 16px);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--muted);
+    line-height: 1.4;
+    margin-bottom: 32px;
   }
 
   .options-list {
@@ -315,7 +325,7 @@
     background: var(--surface2);
     border: 1px solid var(--border);
     color: var(--text);
-    padding: 16px 20px;
+    padding: 14px 20px;
     text-align: left;
     cursor: pointer;
     font-family: 'IBM Plex Sans', sans-serif;
@@ -348,9 +358,28 @@
     min-width: 22px;
     opacity: 0.5;
     padding-top: 2px;
+    flex-shrink: 0;
   }
   .option-btn.correct .option-letter,
   .option-btn.wrong .option-letter { opacity: 1; }
+
+  .option-text-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .option-main {
+    font-size: 15px;
+    line-height: 1.4;
+  }
+  .option-es {
+    font-size: 12px;
+    font-style: italic;
+    opacity: 0.55;
+    line-height: 1.3;
+  }
+  .option-btn.correct .option-es,
+  .option-btn.wrong .option-es { opacity: 0.75; }
 
   .feedback-row {
     margin-top: 28px;
@@ -546,6 +575,7 @@
         <div class="srss-indicator" id="srs-dots"></div>
         <div class="card-topic-tag" id="card-topic"></div>
         <div class="question-text" id="question-text"></div>
+        <div class="question-translation" id="question-translation"></div>
         <div class="options-list" id="options-list"></div>
         <div class="feedback-row" id="feedback-row" style="display:none">
           <div>
@@ -590,143 +620,147 @@
 
 <script>
 // ===== ALL QUESTIONS DATA =====
+// Each question now has:
+//   q       — Russian question text
+//   qes     — Spanish translation of the question
+//   options — Russian answer options
+//   optEs   — Spanish translations of the answer options (same order)
+//   answer  — index of correct answer
 const ALL_QUESTIONS = [
   // Task 22 — Early Russian History
-  { topic: "22 — Древняя Русь", q: "В 862 г. был призван на княжение", options: ["Олег", "Владимир", "Рюрик"], answer: 2 },
-  { topic: "22 — Древняя Русь", q: "Киевский князь Владимир в конце X в.", options: ["освободил Москву от интервентов", "разгромил врагов в Ледовом побоище", "крестил Русь"], answer: 2 },
-  { topic: "22 — Древняя Русь", q: "Крещение Руси состоялось", options: ["в 988 г.", "в 1812 г.", "в 1917 г."], answer: 0 },
-  { topic: "22 — Древняя Русь", q: "К XVIII в. относится правление", options: ["Екатерины II", "Ивана Грозного", "Дмитрия Донского"], answer: 0 },
-  { topic: "22 — Древняя Русь", q: "Русским войском в Куликовской битве командовал", options: ["Иван Грозный", "Дмитрий Донской", "Александр Невский"], answer: 1 },
-  { topic: "22 — Древняя Русь", q: "Призвание варягов на Русь произошло", options: ["в 862 г.", "в 988 г.", "в 1380 г."], answer: 0 },
-  { topic: "22 — Древняя Русь", q: "В 862 г. произошло", options: ["призвание варягов на Русь", "сражение на Куликовом поле", "освобождение Москвы от польско-литовских интервентов"], answer: 0 },
-  { topic: "22 — Древняя Русь", q: "В правление Екатерины II русская армия побеждала под командованием", options: ["П.А. Столыпина", "А.В. Суворова", "Г.К. Жукова"], answer: 1 },
-  { topic: "22 — Древняя Русь", q: "Русским войском в Ледовом побоище командовал", options: ["Иван Грозный", "Александр Суворов", "Александр Невский"], answer: 2 },
+  { topic: "22 — Древняя Русь", q: "В 862 г. был призван на княжение", qes: "En el año 862 fue llamado a reinar", options: ["Олег", "Владимир", "Рюрик"], optEs: ["Oleg", "Vladímir", "Riúrik"], answer: 2 },
+  { topic: "22 — Древняя Русь", q: "Киевский князь Владимир в конце X в.", qes: "El príncipe de Kiev Vladímir a finales del siglo X", options: ["освободил Москву от интервентов", "разгромил врагов в Ледовом побоище", "крестил Русь"], optEs: ["liberó Moscú de los interventores", "derrotó a los enemigos en la Batalla del Hielo", "bautizó a la Rus"], answer: 2 },
+  { topic: "22 — Древняя Русь", q: "Крещение Руси состоялось", qes: "El bautismo de la Rus tuvo lugar", options: ["в 988 г.", "в 1812 г.", "в 1917 г."], optEs: ["en el año 988", "en el año 1812", "en el año 1917"], answer: 0 },
+  { topic: "22 — Древняя Русь", q: "К XVIII в. относится правление", qes: "Al siglo XVIII pertenece el reinado de", options: ["Екатерины II", "Ивана Грозного", "Дмитрия Донского"], optEs: ["Catalina II", "Iván el Terrible", "Dmitri Donskói"], answer: 0 },
+  { topic: "22 — Древняя Русь", q: "Русским войском в Куликовской битве командовал", qes: "El ejército ruso en la Batalla de Kulikovo fue comandado por", options: ["Иван Грозный", "Дмитрий Донской", "Александр Невский"], optEs: ["Iván el Terrible", "Dmitri Donskói", "Alejandro Nevski"], answer: 1 },
+  { topic: "22 — Древняя Русь", q: "Призвание варягов на Русь произошло", qes: "La llamada de los varegos a la Rus ocurrió", options: ["в 862 г.", "в 988 г.", "в 1380 г."], optEs: ["en el año 862", "en el año 988", "en el año 1380"], answer: 0 },
+  { topic: "22 — Древняя Русь", q: "В 862 г. произошло", qes: "En el año 862 ocurrió", options: ["призвание варягов на Русь", "сражение на Куликовом поле", "освобождение Москвы от польско-литовских интервентов"], optEs: ["la llamada de los varegos a la Rus", "la batalla en el campo de Kulikovo", "la liberación de Moscú de los interventores polaco-lituanos"], answer: 0 },
+  { topic: "22 — Древняя Русь", q: "В правление Екатерины II русская армия побеждала под командованием", qes: "Durante el reinado de Catalina II, el ejército ruso venció bajo el mando de", options: ["П.А. Столыпина", "А.В. Суворова", "Г.К. Жукова"], optEs: ["P. A. Stolypin", "A. V. Suvórov", "G. K. Zhúkov"], answer: 1 },
+  { topic: "22 — Древняя Русь", q: "Русским войском в Ледовом побоище командовал", qes: "El ejército ruso en la Batalla del Hielo fue comandado por", options: ["Иван Грозный", "Александр Суворов", "Александр Невский"], optEs: ["Iván el Terrible", "Alejandro Suvórov", "Alejandro Nevski"], answer: 2 },
 
   // Task 23
-  { topic: "23 — Смута и реформы", q: "В 1612 г. Москва была освобождена от", options: ["шведских интервентов", "польско-литовских интервентов", "французских интервентов"], answer: 1 },
-  { topic: "23 — Смута и реформы", q: "В освобождении Москвы от польско-литовских захватчиков в 1612 г. важную роль сыграл", options: ["Дмитрий Донской", "Александр Невский", "Кузьма Минин"], answer: 2 },
-  { topic: "23 — Смута и реформы", q: "Пётр I победил", options: ["в Ледовом побоище", "в Полтавской битве", "в Бородинском сражении"], answer: 1 },
-  { topic: "23 — Смута и реформы", q: "Освобождение Руси от ордынского владычества произошло в результате", options: ["Ледового побоища", "«стояния» на Угре", "Бородинского сражения"], answer: 1 },
-  { topic: "23 — Смута и реформы", q: "В освобождении Москвы от польско-литовских войск в 1612 г. важную роль сыграл", options: ["Д.М. Пожарский", "М.И. Кутузов", "А.В. Суворов"], answer: 0 },
-  { topic: "23 — Смута и реформы", q: "Дмитрий Донской был участником", options: ["Куликовской битвы", "Ледового побоища", "освобождения Москвы от польско-литовских войск"], answer: 0 },
-  { topic: "23 — Смута и реформы", q: "Первым императором России был", options: ["Пётр I", "Александр Невский", "Кузьма Минин"], answer: 0 },
-  { topic: "23 — Смута и реформы", q: "Победа России в Северной войне относится к правлению", options: ["Дмитрия Донского", "Петра I", "Рюрика"], answer: 1 },
-  { topic: "23 — Смута и реформы", q: "Д.М. Пожарский участвовал в освобождении Москвы от польско-литовских интервентов вместе", options: ["с К. Мининым", "с М.И. Кутузовым", "с Ю.А. Гагариным"], answer: 0 },
-  { topic: "23 — Смута и реформы", q: "В Ледовом побоище было разгромлено войско", options: ["немецких рыцарей-крестоносцев", "монгольских завоевателей", "арабских завоевателей"], answer: 0 },
-  { topic: "23 — Смута и реформы", q: "В 1612 г. от польско-литовских захватчиков была освобождена", options: ["Астрахань", "Москва", "Казань"], answer: 1 },
+  { topic: "23 — Смута и реформы", q: "В 1612 г. Москва была освобождена от", qes: "En 1612 Moscú fue liberada de", options: ["шведских интервентов", "польско-литовских интервентов", "французских интервентов"], optEs: ["los interventores suecos", "los interventores polaco-lituanos", "los interventores franceses"], answer: 1 },
+  { topic: "23 — Смута и реформы", q: "В освобождении Москвы от польско-литовских захватчиков в 1612 г. важную роль сыграл", qes: "En la liberación de Moscú de los invasores polaco-lituanos en 1612 desempeñó un papel importante", options: ["Дмитрий Донской", "Александр Невский", "Кузьма Минин"], optEs: ["Dmitri Donskói", "Alejandro Nevski", "Kuzmá Minin"], answer: 2 },
+  { topic: "23 — Смута и реформы", q: "Пётр I победил", qes: "Pedro I venció", options: ["в Ледовом побоище", "в Полтавской битве", "в Бородинском сражении"], optEs: ["en la Batalla del Hielo", "en la Batalla de Poltava", "en la Batalla de Borodinó"], answer: 1 },
+  { topic: "23 — Смута и реформы", q: "Освобождение Руси от ордынского владычества произошло в результате", qes: "La liberación de la Rus del dominio de la Horda ocurrió como resultado de", options: ["Ледового побоища", "«стояния» на Угре", "Бородинского сражения"], optEs: ["la Batalla del Hielo", "el 'Gran Enfrentamiento' en el río Ugra", "la Batalla de Borodinó"], answer: 1 },
+  { topic: "23 — Смута и реформы", q: "В освобождении Москвы от польско-литовских войск в 1612 г. важную роль сыграл", qes: "En la liberación de Moscú de las tropas polaco-lituanas en 1612 desempeñó un papel importante", options: ["Д.М. Пожарский", "М.И. Кутузов", "А.В. Суворов"], optEs: ["D. M. Pozharski", "M. I. Kutúzov", "A. V. Suvórov"], answer: 0 },
+  { topic: "23 — Смута и реформы", q: "Дмитрий Донской был участником", qes: "Dmitri Donskói fue participante de", options: ["Куликовской битвы", "Ледового побоища", "освобождения Москвы от польско-литовских войск"], optEs: ["la Batalla de Kulikovo", "la Batalla del Hielo", "la liberación de Moscú de las tropas polaco-lituanas"], answer: 0 },
+  { topic: "23 — Смута и реформы", q: "Первым императором России был", qes: "El primer emperador de Rusia fue", options: ["Пётр I", "Александр Невский", "Кузьма Минин"], optEs: ["Pedro I", "Alejandro Nevski", "Kuzmá Minin"], answer: 0 },
+  { topic: "23 — Смута и реформы", q: "Победа России в Северной войне относится к правлению", qes: "La victoria de Rusia en la Guerra del Norte corresponde al reinado de", options: ["Дмитрия Донского", "Петра I", "Рюрика"], optEs: ["Dmitri Donskói", "Pedro I", "Riúrik"], answer: 1 },
+  { topic: "23 — Смута и реформы", q: "Д.М. Пожарский участвовал в освобождении Москвы от польско-литовских интервентов вместе", qes: "D. M. Pozharski participó en la liberación de Moscú de los interventores polaco-lituanos junto con", options: ["с К. Мининым", "с М.И. Кутузовым", "с Ю.А. Гагариным"], optEs: ["K. Minin", "M. I. Kutúzov", "Yu. A. Gagarin"], answer: 0 },
+  { topic: "23 — Смута и реформы", q: "В Ледовом побоище было разгромлено войско", qes: "En la Batalla del Hielo fue derrotado el ejército de", options: ["немецких рыцарей-крестоносцев", "монгольских завоевателей", "арабских завоевателей"], optEs: ["los caballeros cruzados alemanes", "los conquistadores mongoles", "los conquistadores árabes"], answer: 0 },
+  { topic: "23 — Смута и реформы", q: "В 1612 г. от польско-литовских захватчиков была освобождена", qes: "En 1612 fue liberada de los invasores polaco-lituanos", options: ["Астрахань", "Москва", "Казань"], optEs: ["Astracán", "Moscú", "Kazán"], answer: 1 },
 
   // Task 24
-  { topic: "24 — XIX век", q: "Великим полководцем периода правления Екатерины II является", options: ["Александр Суворов", "Дмитрий Пожарский", "Иван Грозный"], answer: 0 },
-  { topic: "24 — XIX век", q: "Участником Отечественной войны 1812 г. был", options: ["Дмитрий Донской", "Дмитрий Пожарский", "Михаил Кутузов"], answer: 2 },
-  { topic: "24 — XIX век", q: "Отечественная война 1812 г. окончилась победой", options: ["Франции", "России", "Англии"], answer: 1 },
-  { topic: "24 — XIX век", q: "Во время правления Ивана Грозного к России был присоединен город", options: ["Казань", "Новгород Великий", "Тверь"], answer: 0 },
-  { topic: "24 — XIX век", q: "Пётр I известен в истории как", options: ["основатель Санкт-Петербурга", "победитель Наполеона Бонапарта", "освободитель Москвы от польско-литовских интервентов"], answer: 0 },
-  { topic: "24 — XIX век", q: "В Полтавской битве участвовал", options: ["Александр Невский", "Пётр I", "А.В. Суворов"], answer: 1 },
-  { topic: "24 — XIX век", q: "В 1812 г. произошло", options: ["Бородинское сражение", "Ледовое побоище", "крещение Руси"], answer: 0 },
-  { topic: "24 — XIX век", q: "В 1812 г. на Россию напала", options: ["Франция", "Япония", "Великобритания"], answer: 0 },
-  { topic: "24 — XIX век", q: "Русским войском во время Ледового побоища командовал", options: ["Александр Невский", "Дмитрий Донской", "Рюрик"], answer: 0 },
-  { topic: "24 — XIX век", q: "Бородинская битва произошла", options: ["в 1612 г.", "в 1812 г.", "в 1917 г."], answer: 1 },
-  { topic: "24 — XIX век", q: "В ходе Отечественной войны 1812 г. была разгромлена", options: ["монгольская армия", "французская армия", "шведская армия"], answer: 1 },
+  { topic: "24 — XIX век", q: "Великим полководцем периода правления Екатерины II является", qes: "El gran comandante del período del reinado de Catalina II es", options: ["Александр Суворов", "Дмитрий Пожарский", "Иван Грозный"], optEs: ["Alejandro Suvórov", "Dmitri Pozharski", "Iván el Terrible"], answer: 0 },
+  { topic: "24 — XIX век", q: "Участником Отечественной войны 1812 г. был", qes: "Participante de la Guerra Patria de 1812 fue", options: ["Дмитрий Донской", "Дмитрий Пожарский", "Михаил Кутузов"], optEs: ["Dmitri Donskói", "Dmitri Pozharski", "Mijaíl Kutúzov"], answer: 2 },
+  { topic: "24 — XIX век", q: "Отечественная война 1812 г. окончилась победой", qes: "La Guerra Patria de 1812 terminó con la victoria de", options: ["Франции", "России", "Англии"], optEs: ["Francia", "Rusia", "Inglaterra"], answer: 1 },
+  { topic: "24 — XIX век", q: "Во время правления Ивана Грозного к России был присоединен город", qes: "Durante el reinado de Iván el Terrible fue anexada a Rusia la ciudad de", options: ["Казань", "Новгород Великий", "Тверь"], optEs: ["Kazán", "Nóvgorod el Grande", "Tver"], answer: 0 },
+  { topic: "24 — XIX век", q: "Пётр I известен в истории как", qes: "Pedro I es conocido en la historia como", options: ["основатель Санкт-Петербурга", "победитель Наполеона Бонапарта", "освободитель Москвы от польско-литовских интервентов"], optEs: ["fundador de San Petersburgo", "vencedor de Napoleón Bonaparte", "libertador de Moscú de los interventores polaco-lituanos"], answer: 0 },
+  { topic: "24 — XIX век", q: "В Полтавской битве участвовал", qes: "En la Batalla de Poltava participó", options: ["Александр Невский", "Пётр I", "А.В. Суворов"], optEs: ["Alejandro Nevski", "Pedro I", "A. V. Suvórov"], answer: 1 },
+  { topic: "24 — XIX век", q: "В 1812 г. произошло", qes: "En 1812 ocurrió", options: ["Бородинское сражение", "Ледовое побоище", "крещение Руси"], optEs: ["la Batalla de Borodinó", "la Batalla del Hielo", "el bautismo de la Rus"], answer: 0 },
+  { topic: "24 — XIX век", q: "В 1812 г. на Россию напала", qes: "En 1812 invadió Rusia", options: ["Франция", "Япония", "Великобритания"], optEs: ["Francia", "Japón", "Gran Bretaña"], answer: 0 },
+  { topic: "24 — XIX век", q: "Русским войском во время Ледового побоища командовал", qes: "El ejército ruso durante la Batalla del Hielo fue comandado por", options: ["Александр Невский", "Дмитрий Донской", "Рюрик"], optEs: ["Alejandro Nevski", "Dmitri Donskói", "Riúrik"], answer: 0 },
+  { topic: "24 — XIX век", q: "Бородинская битва произошла", qes: "La Batalla de Borodinó tuvo lugar", options: ["в 1612 г.", "в 1812 г.", "в 1917 г."], optEs: ["en el año 1612", "en el año 1812", "en el año 1917"], answer: 1 },
+  { topic: "24 — XIX век", q: "В ходе Отечественной войны 1812 г. была разгромлена", qes: "Durante la Guerra Patria de 1812 fue derrotado el ejército", options: ["монгольская армия", "французская армия", "шведская армия"], optEs: ["mongol", "francés", "sueco"], answer: 1 },
 
   // Task 25
-  { topic: "25 — XX век", q: "Во время Великой Отечественной войны произошла (Курск/Невская/Куликово)", options: ["Куликовская битва", "Курская битва", "Невская битва"], answer: 1 },
-  { topic: "25 — XX век", q: "В октябре 1917 г. в ходе революции к власти в России пришли", options: ["кадеты", "октябристы", "большевики"], answer: 2 },
-  { topic: "25 — XX век", q: "В феврале 1917 г. в ходе революции", options: ["Москва была захвачена французским войском", "Россия была провозглашена империей", "в России был свергнут император"], answer: 2 },
-  { topic: "25 — XX век", q: "В 1917 г. в России", options: ["состоялись Летние Олимпийские игры", "произошла революция", "был запущен первый искусственный спутник Земли"], answer: 1 },
-  { topic: "25 — XX век", q: "В 1941 г. на СССР напала", options: ["Франция", "Германия", "Англия"], answer: 1 },
-  { topic: "25 — XX век", q: "Во время Великой Отечественной войны советские войска освободили", options: ["Вашингтон", "Варшаву", "Лондон"], answer: 1 },
-  { topic: "25 — XX век", q: "С событиями Великой российской революции связана деятельность", options: ["В.И. Ленина", "Б.Н. Ельцина", "М.С. Горбачёва"], answer: 0 },
-  { topic: "25 — XX век", q: "Во время Великой Отечественной войны противником СССР была", options: ["Великобритания", "Германия", "Швейцария"], answer: 1 },
-  { topic: "25 — XX век", q: "Участником Великой российской революции был", options: ["К. Минин", "И.В. Сталин", "А.В. Суворов"], answer: 1 },
-  { topic: "25 — XX век", q: "Великая Отечественная война окончилась", options: ["в январе", "в мае", "в сентябре"], answer: 1 },
+  { topic: "25 — XX век", q: "Во время Великой Отечественной войны произошла (Курск/Невская/Куликово)", qes: "Durante la Gran Guerra Patria ocurrió (Kursk / Nevá / Kulikovo)", options: ["Куликовская битва", "Курская битва", "Невская битва"], optEs: ["la Batalla de Kulikovo", "la Batalla de Kursk", "la Batalla del Nevá"], answer: 1 },
+  { topic: "25 — XX век", q: "В октябре 1917 г. в ходе революции к власти в России пришли", qes: "En octubre de 1917 durante la revolución llegaron al poder en Rusia", options: ["кадеты", "октябристы", "большевики"], optEs: ["los cadetes", "los octubristas", "los bolcheviques"], answer: 2 },
+  { topic: "25 — XX век", q: "В феврале 1917 г. в ходе революции", qes: "En febrero de 1917 durante la revolución", options: ["Москва была захвачена французским войском", "Россия была провозглашена империей", "в России был свергнут император"], optEs: ["Moscú fue tomada por el ejército francés", "Rusia fue proclamada imperio", "el emperador fue derrocado en Rusia"], answer: 2 },
+  { topic: "25 — XX век", q: "В 1917 г. в России", qes: "En 1917 en Rusia", options: ["состоялись Летние Олимпийские игры", "произошла революция", "был запущен первый искусственный спутник Земли"], optEs: ["se celebraron los Juegos Olímpicos de Verano", "ocurrió una revolución", "fue lanzado el primer satélite artificial de la Tierra"], answer: 1 },
+  { topic: "25 — XX век", q: "В 1941 г. на СССР напала", qes: "En 1941 invadió la URSS", options: ["Франция", "Германия", "Англия"], optEs: ["Francia", "Alemania", "Inglaterra"], answer: 1 },
+  { topic: "25 — XX век", q: "Во время Великой Отечественной войны советские войска освободили", qes: "Durante la Gran Guerra Patria las tropas soviéticas liberaron", options: ["Вашингтон", "Варшаву", "Лондон"], optEs: ["Washington", "Varsovia", "Londres"], answer: 1 },
+  { topic: "25 — XX век", q: "С событиями Великой российской революции связана деятельность", qes: "Con los eventos de la Gran Revolución Rusa está relacionada la actividad de", options: ["В.И. Ленина", "Б.Н. Ельцина", "М.С. Горбачёва"], optEs: ["V. I. Lenin", "B. N. Yeltsin", "M. S. Gorbachov"], answer: 0 },
+  { topic: "25 — XX век", q: "Во время Великой Отечественной войны противником СССР была", qes: "Durante la Gran Guerra Patria el adversario de la URSS era", options: ["Великобритания", "Германия", "Швейцария"], optEs: ["Gran Bretaña", "Alemania", "Suiza"], answer: 1 },
+  { topic: "25 — XX век", q: "Участником Великой российской революции был", qes: "Participante de la Gran Revolución Rusa fue", options: ["К. Минин", "И.В. Сталин", "А.В. Суворов"], optEs: ["K. Minin", "I. V. Stalin", "A. V. Suvórov"], answer: 1 },
+  { topic: "25 — XX век", q: "Великая Отечественная война окончилась", qes: "La Gran Guerra Patria terminó", options: ["в январе", "в мае", "в сентябре"], optEs: ["en enero", "en mayo", "en septiembre"], answer: 1 },
 
   // Task 26
-  { topic: "26 — СССР", q: "Акт о безоговорочной капитуляции фашистской Германии был подписан", options: ["в январе 1945 г.", "в мае 1945 г.", "в августе 1945 г."], answer: 1 },
-  { topic: "26 — СССР", q: "Весной 1945 г. Красная армия вошла", options: ["в Минск", "в Берлин", "в Париж"], answer: 1 },
-  { topic: "26 — СССР", q: "Военачальником в Московской битве был", options: ["Ю.А. Гагарин", "Г.К. Жуков", "А.В. Суворов"], answer: 1 },
-  { topic: "26 — СССР", q: "В 1917 г. в России к власти пришли", options: ["декабристы", "большевики", "варяги"], answer: 1 },
-  { topic: "26 — СССР", q: "В 1917 г. в России (реформа/битва/отречение)", options: ["состоялся первый полёт человека в космос", "произошла Сталинградская битва", "император отказался от власти"], answer: 2 },
-  { topic: "26 — СССР", q: "Руководителем СССР был", options: ["П.А. Столыпин", "Ю.А. Гагарин", "В.И. Ленин"], answer: 2 },
-  { topic: "26 — СССР", q: "В начале XX в. реформы в России проводил", options: ["М.И. Кутузов", "П.А. Столыпин", "Ю.А. Гагарин"], answer: 1 },
-  { topic: "26 — СССР", q: "Первым человеком, совершившим полёт в космос, был", options: ["П.А. Столыпин", "Ю.А. Гагарин", "А.В. Суворов"], answer: 1 },
-  { topic: "26 — СССР", q: "Участником событий, связанных с образованием СССР, был", options: ["И.В. Сталин", "Б.Н. Ельцин", "В.В. Путин"], answer: 0 },
-  { topic: "26 — СССР", q: "В годы Великой Отечественной войны упорные бои шли за город", options: ["Сталинград", "Челябинск", "Владивосток"], answer: 0 },
-  { topic: "26 — СССР", q: "В.И. Ленин участвовал", options: ["в Великой российской революции", "в Великой Отечественной войне", "в подготовке полёта первого космонавта"], answer: 0 },
+  { topic: "26 — СССР", q: "Акт о безоговорочной капитуляции фашистской Германии был подписан", qes: "El Acta de Rendición Incondicional de la Alemania fascista fue firmada", options: ["в январе 1945 г.", "в мае 1945 г.", "в августе 1945 г."], optEs: ["en enero de 1945", "en mayo de 1945", "en agosto de 1945"], answer: 1 },
+  { topic: "26 — СССР", q: "Весной 1945 г. Красная армия вошла", qes: "En la primavera de 1945 el Ejército Rojo entró en", options: ["в Минск", "в Берлин", "в Париж"], optEs: ["Minsk", "Berlín", "París"], answer: 1 },
+  { topic: "26 — СССР", q: "Военачальником в Московской битве был", qes: "El comandante en la Batalla de Moscú fue", options: ["Ю.А. Гагарин", "Г.К. Жуков", "А.В. Суворов"], optEs: ["Yu. A. Gagarin", "G. K. Zhúkov", "A. V. Suvórov"], answer: 1 },
+  { topic: "26 — СССР", q: "В 1917 г. в России к власти пришли", qes: "En 1917 llegaron al poder en Rusia", options: ["декабристы", "большевики", "варяги"], optEs: ["los decembristas", "los bolcheviques", "los varegos"], answer: 1 },
+  { topic: "26 — СССР", q: "В 1917 г. в России (реформа/битва/отречение)", qes: "En 1917 en Rusia (reforma / batalla / abdicación)", options: ["состоялся первый полёт человека в космос", "произошла Сталинградская битва", "император отказался от власти"], optEs: ["tuvo lugar el primer vuelo humano al espacio", "ocurrió la Batalla de Stalingrado", "el emperador abdicó del poder"], answer: 2 },
+  { topic: "26 — СССР", q: "Руководителем СССР был", qes: "Líder de la URSS fue", options: ["П.А. Столыпин", "Ю.А. Гагарин", "В.И. Ленин"], optEs: ["P. A. Stolypin", "Yu. A. Gagarin", "V. I. Lenin"], answer: 2 },
+  { topic: "26 — СССР", q: "В начале XX в. реформы в России проводил", qes: "A principios del siglo XX las reformas en Rusia las llevó a cabo", options: ["М.И. Кутузов", "П.А. Столыпин", "Ю.А. Гагарин"], optEs: ["M. I. Kutúzov", "P. A. Stolypin", "Yu. A. Gagarin"], answer: 1 },
+  { topic: "26 — СССР", q: "Первым человеком, совершившим полёт в космос, был", qes: "El primer ser humano en realizar un vuelo al espacio fue", options: ["П.А. Столыпин", "Ю.А. Гагарин", "А.В. Суворов"], optEs: ["P. A. Stolypin", "Yu. A. Gagarin", "A. V. Suvórov"], answer: 1 },
+  { topic: "26 — СССР", q: "Участником событий, связанных с образованием СССР, был", qes: "Participante en los eventos relacionados con la formación de la URSS fue", options: ["И.В. Сталин", "Б.Н. Ельцин", "В.В. Путин"], optEs: ["I. V. Stalin", "B. N. Yeltsin", "V. V. Putin"], answer: 0 },
+  { topic: "26 — СССР", q: "В годы Великой Отечественной войны упорные бои шли за город", qes: "Durante la Gran Guerra Patria hubo combates encarnizados por la ciudad de", options: ["Сталинград", "Челябинск", "Владивосток"], optEs: ["Stalingrado", "Cheliábinsk", "Vladivostok"], answer: 0 },
+  { topic: "26 — СССР", q: "В.И. Ленин участвовал", qes: "V. I. Lenin participó en", options: ["в Великой российской революции", "в Великой Отечественной войне", "в подготовке полёта первого космонавта"], optEs: ["la Gran Revolución Rusa", "la Gran Guerra Patria", "la preparación del vuelo del primer cosmonauta"], answer: 0 },
 
   // Task 27
-  { topic: "27 — Россия после СССР", q: "В процессе распада СССР бывшие советские республики создали", options: ["Организацию Объединенных наций (ООН)", "Содружество Независимых Государств (СНГ)", "Совет Европы (СЕ)"], answer: 1 },
-  { topic: "27 — Россия после СССР", q: "Какое событие произошло в 1961 г.?", options: ["юридическое оформление распада СССР", "первый полёт человека в космос", "образование СССР"], answer: 1 },
-  { topic: "27 — Россия после СССР", q: "Действующая Конституция России была принята", options: ["в 1945 г.", "в 1961 г.", "в 1993 г."], answer: 2 },
-  { topic: "27 — Россия после СССР", q: "Первым руководителем правительства СССР был", options: ["В.И. Ленин", "Г.К. Жуков", "М.С. Горбачёв"], answer: 0 },
-  { topic: "27 — Россия после СССР", q: "Великая Отечественная война завершилась разгромом", options: ["США", "Англии", "Германии"], answer: 2 },
-  { topic: "27 — Россия после СССР", q: "Первый в мире полёт в космос совершил гражданин", options: ["США", "Англии", "СССР"], answer: 2 },
-  { topic: "27 — Россия после СССР", q: "22 июня 1941 г. на территорию СССР вторглись войска", options: ["Германии", "США", "Китая"], answer: 0 },
-  { topic: "27 — Россия после СССР", q: "Советский космонавт совершил первый космический полёт", options: ["в 1917 г.", "в 1945 г.", "в 1961 г."], answer: 2 },
-  { topic: "27 — Россия после СССР", q: "СССР распался", options: ["в 1922 г.", "в 1941 г.", "в 1991 г."], answer: 2 },
-  { topic: "27 — Россия после СССР", q: "Евразийский экономический союз был создан в", options: ["1961 г.", "1991 г.", "2015 г."], answer: 2 },
+  { topic: "27 — Россия после СССР", q: "В процессе распада СССР бывшие советские республики создали", qes: "En el proceso de desintegración de la URSS las antiguas repúblicas soviéticas crearon", options: ["Организацию Объединенных наций (ООН)", "Содружество Независимых Государств (СНГ)", "Совет Европы (СЕ)"], optEs: ["la Organización de las Naciones Unidas (ONU)", "la Comunidad de Estados Independientes (CEI)", "el Consejo de Europa (CE)"], answer: 1 },
+  { topic: "27 — Россия после СССР", q: "Какое событие произошло в 1961 г.?", qes: "¿Qué acontecimiento tuvo lugar en 1961?", options: ["юридическое оформление распада СССР", "первый полёт человека в космос", "образование СССР"], optEs: ["la formalización jurídica de la disolución de la URSS", "el primer vuelo humano al espacio", "la formación de la URSS"], answer: 1 },
+  { topic: "27 — Россия после СССР", q: "Действующая Конституция России была принята", qes: "La Constitución vigente de Rusia fue adoptada", options: ["в 1945 г.", "в 1961 г.", "в 1993 г."], optEs: ["en 1945", "en 1961", "en 1993"], answer: 2 },
+  { topic: "27 — Россия после СССР", q: "Первым руководителем правительства СССР был", qes: "El primer jefe del gobierno de la URSS fue", options: ["В.И. Ленин", "Г.К. Жуков", "М.С. Горбачёв"], optEs: ["V. I. Lenin", "G. K. Zhúkov", "M. S. Gorbachov"], answer: 0 },
+  { topic: "27 — Россия после СССР", q: "Великая Отечественная война завершилась разгромом", qes: "La Gran Guerra Patria terminó con la derrota de", options: ["США", "Англии", "Германии"], optEs: ["EE. UU.", "Inglaterra", "Alemania"], answer: 2 },
+  { topic: "27 — Россия после СССР", q: "Первый в мире полёт в космос совершил гражданин", qes: "El primer vuelo al espacio en el mundo lo realizó un ciudadano de", options: ["США", "Англии", "СССР"], optEs: ["EE. UU.", "Inglaterra", "la URSS"], answer: 2 },
+  { topic: "27 — Россия после СССР", q: "22 июня 1941 г. на территорию СССР вторглись войска", qes: "El 22 de junio de 1941 invadieron el territorio de la URSS las tropas de", options: ["Германии", "США", "Китая"], optEs: ["Alemania", "EE. UU.", "China"], answer: 0 },
+  { topic: "27 — Россия после СССР", q: "Советский космонавт совершил первый космический полёт", qes: "El cosmonauta soviético realizó el primer vuelo espacial", options: ["в 1917 г.", "в 1945 г.", "в 1961 г."], optEs: ["en 1917", "en 1945", "en 1961"], answer: 2 },
+  { topic: "27 — Россия после СССР", q: "СССР распался", qes: "La URSS se disolvió", options: ["в 1922 г.", "в 1941 г.", "в 1991 г."], optEs: ["en 1922", "en 1941", "en 1991"], answer: 2 },
+  { topic: "27 — Россия после СССР", q: "Евразийский экономический союз был создан в", qes: "La Unión Económica Euroasiática fue creada en", options: ["1961 г.", "1991 г.", "2015 г."], optEs: ["1961", "1991", "2015"], answer: 2 },
 
   // Task 29 — Rights of foreigners
-  { topic: "29 — Права иностранцев", q: "Какое право Конституция РФ гарантирует иностранному гражданину?", options: ["участвовать в управлении государством через представителей", "избирать в органы государственной власти", "свободно использовать способности для предпринимательской деятельности"], answer: 2 },
-  { topic: "29 — Права иностранцев", q: "Конституция РФ гарантирует иностранному гражданину право", options: ["защищать свои права всеми законными способами", "избирать", "поступать на государственную службу"], answer: 0 },
-  { topic: "29 — Права иностранцев", q: "Конституция РФ гарантирует иностранному гражданину право", options: ["на личную неприкосновенность", "участвовать в выборах органов государственной власти", "участвовать в отправлении правосудия"], answer: 0 },
-  { topic: "29 — Права иностранцев", q: "Иностранный гражданин в РФ имеет право", options: ["на участие в выборах государственных органов", "на участие в управлении государством", "на охрану здоровья"], answer: 2 },
-  { topic: "29 — Права иностранцев", q: "Иностранный гражданин, находящийся на территории РФ, пользуется", options: ["правом избирать органы власти", "правом участвовать в делах государства", "правом на свободу вероисповедания"], answer: 2 },
-  { topic: "29 — Права иностранцев", q: "К правам иностранного гражданина в РФ относится", options: ["свободное распоряжение своими способностями к труду", "бесплатное посещение театров", "бесплатное обучение в вузах"], answer: 0 },
+  { topic: "29 — Права иностранцев", q: "Какое право Конституция РФ гарантирует иностранному гражданину?", qes: "¿Qué derecho garantiza la Constitución de la FR al ciudadano extranjero?", options: ["участвовать в управлении государством через представителей", "избирать в органы государственной власти", "свободно использовать способности для предпринимательской деятельности"], optEs: ["participar en la gestión del Estado a través de representantes", "votar en los órganos del poder estatal", "utilizar libremente sus capacidades para actividades empresariales"], answer: 2 },
+  { topic: "29 — Права иностранцев", q: "Конституция РФ гарантирует иностранному гражданину право", qes: "La Constitución de la FR garantiza al ciudadano extranjero el derecho a", options: ["защищать свои права всеми законными способами", "избирать", "поступать на государственную службу"], optEs: ["defender sus derechos por todos los medios legales", "votar", "acceder a la función pública"], answer: 0 },
+  { topic: "29 — Права иностранцев", q: "Конституция РФ гарантирует иностранному гражданину право", qes: "La Constitución de la FR garantiza al ciudadano extranjero el derecho a", options: ["на личную неприкосновенность", "участвовать в выборах органов государственной власти", "участвовать в отправлении правосудия"], optEs: ["la inviolabilidad personal", "participar en las elecciones de los órganos del poder estatal", "participar en la administración de justicia"], answer: 0 },
+  { topic: "29 — Права иностранцев", q: "Иностранный гражданин в РФ имеет право", qes: "El ciudadano extranjero en la FR tiene derecho a", options: ["на участие в выборах государственных органов", "на участие в управлении государством", "на охрану здоровья"], optEs: ["participar en las elecciones de los órganos estatales", "participar en la gestión del Estado", "la protección de la salud"], answer: 2 },
+  { topic: "29 — Права иностранцев", q: "Иностранный гражданин, находящийся на территории РФ, пользуется", qes: "El ciudadano extranjero que se encuentre en el territorio de la FR goza del", options: ["правом избирать органы власти", "правом участвовать в делах государства", "правом на свободу вероисповедания"], optEs: ["derecho a elegir a los órganos de poder", "derecho a participar en los asuntos del Estado", "derecho a la libertad de religión"], answer: 2 },
+  { topic: "29 — Права иностранцев", q: "К правам иностранного гражданина в РФ относится", qes: "Entre los derechos del ciudadano extranjero en la FR se encuentra", options: ["свободное распоряжение своими способностями к труду", "бесплатное посещение театров", "бесплатное обучение в вузах"], optEs: ["la libre disposición de sus capacidades laborales", "la asistencia gratuita a los teatros", "la educación gratuita en universidades"], answer: 0 },
 
   // Task 30 — Obligations of foreigners
-  { topic: "30 — Обязанности и законы", q: "К обязанностям иностранных граждан в РФ относится", options: ["пройти государственную дактилоскопическую регистрацию", "инвестировать деньги в российскую экономику", "иметь счёт в российском коммерческом банке"], answer: 0 },
-  { topic: "30 — Обязанности и законы", q: "По Трудовому кодексу РФ нормальная продолжительность рабочего времени не может превышать", options: ["24 часов в неделю", "40 часов в неделю", "60 часов в неделю"], answer: 1 },
-  { topic: "30 — Обязанности и законы", q: "Взаимные права и обязанности между работником и работодателем устанавливает", options: ["брачный договор", "трудовой договор", "публичный договор"], answer: 1 },
-  { topic: "30 — Обязанности и законы", q: "Право на медицинскую помощь для иностранных граждан", options: ["распространяется только на детей", "предполагается только на платной основе", "обеспечивается законодательством РФ"], answer: 2 },
-  { topic: "30 — Обязанности и законы", q: "В состав Российской Федерации входят", options: ["только республики", "края, области, республики, 3 города федерального значения, автономная область, автономные округа", "89 штатов"], answer: 1 },
-  { topic: "30 — Обязанности и законы", q: "Какую обязанность выполняет иностранный гражданин на территории РФ?", options: ["уплата налогов", "открытие счёта в коммерческом банке", "участие в управлении государством"], answer: 0 },
-  { topic: "30 — Обязанности и законы", q: "К обязанностям иностранных граждан в РФ относится", options: ["встать на миграционный учёт в ГУВМ МВД", "встать на миграционный учёт у работодателя", "встать на миграционный учёт в органе местного самоуправления"], answer: 0 },
+  { topic: "30 — Обязанности и законы", q: "К обязанностям иностранных граждан в РФ относится", qes: "Entre las obligaciones de los ciudadanos extranjeros en la FR se encuentra", options: ["пройти государственную дактилоскопическую регистрацию", "инвестировать деньги в российскую экономику", "иметь счёт в российском коммерческом банке"], optEs: ["someterse al registro dactiloscópico estatal", "invertir dinero en la economía rusa", "tener una cuenta en un banco comercial ruso"], answer: 0 },
+  { topic: "30 — Обязанности и законы", q: "По Трудовому кодексу РФ нормальная продолжительность рабочего времени не может превышать", qes: "Según el Código Laboral de la FR la duración normal de la jornada laboral no puede superar", options: ["24 часов в неделю", "40 часов в неделю", "60 часов в неделю"], optEs: ["24 horas semanales", "40 horas semanales", "60 horas semanales"], answer: 1 },
+  { topic: "30 — Обязанности и законы", q: "Взаимные права и обязанности между работником и работодателем устанавливает", qes: "Los derechos y obligaciones mutuos entre el trabajador y el empleador los establece el", options: ["брачный договор", "трудовой договор", "публичный договор"], optEs: ["contrato matrimonial", "contrato laboral", "contrato público"], answer: 1 },
+  { topic: "30 — Обязанности и законы", q: "Право на медицинскую помощь для иностранных граждан", qes: "El derecho a la asistencia médica para los ciudadanos extranjeros", options: ["распространяется только на детей", "предполагается только на платной основе", "обеспечивается законодательством РФ"], optEs: ["se aplica solo a los niños", "se presupone solo de pago", "está garantizado por la legislación de la FR"], answer: 2 },
+  { topic: "30 — Обязанности и законы", q: "В состав Российской Федерации входят", qes: "La Federación Rusa está compuesta por", options: ["только республики", "края, области, республики, 3 города федерального значения, автономная область, автономные округа", "89 штатов"], optEs: ["solo repúblicas", "territorios, regiones, repúblicas, 3 ciudades de significación federal, una región autónoma y distritos autónomos", "89 estados"], answer: 1 },
+  { topic: "30 — Обязанности и законы", q: "Какую обязанность выполняет иностранный гражданин на территории РФ?", qes: "¿Qué obligación cumple el ciudadano extranjero en el territorio de la FR?", options: ["уплата налогов", "открытие счёта в коммерческом банке", "участие в управлении государством"], optEs: ["el pago de impuestos", "la apertura de una cuenta en un banco comercial", "la participación en la gestión del Estado"], answer: 0 },
+  { topic: "30 — Обязанности и законы", q: "К обязанностям иностранных граждан в РФ относится", qes: "Entre las obligaciones de los ciudadanos extranjeros en la FR se encuentra", options: ["встать на миграционный учёт в ГУВМ МВД", "встать на миграционный учёт у работодателя", "встать на миграционный учёт в органе местного самоуправления"], optEs: ["registrarse en el Departamento Principal de Asuntos Migratorios del Ministerio del Interior", "registrarse ante el empleador", "registrarse en el órgano de autogobierno local"], answer: 0 },
 
   // Task 31 — Temporary residence permit
-  { topic: "31 — Разрешение на пребывание", q: "Должен ли иностранный гражданин проходить медицинское освидетельствование для получения РВП?", options: ["да", "нет", "по желанию"], answer: 0 },
-  { topic: "31 — Разрешение на пребывание", q: "Когда иностранный гражданин приезжает в Россию, он должен заполнить", options: ["доверенность", "миграционную карту", "квитанцию"], answer: 1 },
-  { topic: "31 — Разрешение на пребывание", q: "Иностранный гражданин может подать заявление о выдаче РВП", options: ["лично или в форме электронного документа", "только в форме электронного документа", "только лично"], answer: 0 },
-  { topic: "31 — Разрешение на пребывание", q: "По общему правилу срок временного пребывания иностранного гражданина в РФ определяется сроком действия", options: ["выданной ему визы", "договора об аренде жилья", "договора подряда"], answer: 0 },
-  { topic: "31 — Разрешение на пребывание", q: "Разрешение на временное проживание содержит", options: ["только фамилию", "фамилию, имя", "только имя на русском языке"], answer: 1 },
-  { topic: "31 — Разрешение на пребывание", q: "Разрешение на временное проживание содержит", options: ["дату въезда", "только фамилию", "дату и место рождения"], answer: 2 },
-  { topic: "31 — Разрешение на пребывание", q: "Квота на выдачу иностранным гражданам РВП ежегодно утверждается", options: ["Президентом РФ", "главой администрации субъекта РФ", "Правительством РФ"], answer: 2 },
-  { topic: "31 — Разрешение на пребывание", q: "Какой срок разрешения на временное проживание установлен законодательством РФ?", options: ["1 год", "3 года", "5 лет"], answer: 1 },
+  { topic: "31 — Разрешение на пребывание", q: "Должен ли иностранный гражданин проходить медицинское освидетельствование для получения РВП?", qes: "¿Debe el ciudadano extranjero someterse a un reconocimiento médico para obtener el permiso de residencia temporal?", options: ["да", "нет", "по желанию"], optEs: ["sí", "no", "a voluntad propia"], answer: 0 },
+  { topic: "31 — Разрешение на пребывание", q: "Когда иностранный гражданин приезжает в Россию, он должен заполнить", qes: "Cuando el ciudadano extranjero llega a Rusia, debe cumplimentar", options: ["доверенность", "миграционную карту", "квитанцию"], optEs: ["un poder notarial", "una tarjeta migratoria", "un recibo"], answer: 1 },
+  { topic: "31 — Разрешение на пребывание", q: "Иностранный гражданин может подать заявление о выдаче РВП", qes: "El ciudadano extranjero puede presentar la solicitud de permiso de residencia temporal", options: ["лично или в форме электронного документа", "только в форме электронного документа", "только лично"], optEs: ["personalmente o en forma de documento electrónico", "solo en forma de documento electrónico", "solo personalmente"], answer: 0 },
+  { topic: "31 — Разрешение на пребывание", q: "По общему правилу срок временного пребывания иностранного гражданина в РФ определяется сроком действия", qes: "Por regla general el plazo de estancia temporal del ciudadano extranjero en la FR lo determina el período de validez de", options: ["выданной ему визы", "договора об аренде жилья", "договора подряда"], optEs: ["la visa que le ha sido expedida", "el contrato de arrendamiento de vivienda", "el contrato de obra"], answer: 0 },
+  { topic: "31 — Разрешение на пребывание", q: "Разрешение на временное проживание содержит", qes: "El permiso de residencia temporal contiene", options: ["только фамилию", "фамилию, имя", "только имя на русском языке"], optEs: ["solo el apellido", "el apellido y el nombre", "solo el nombre en ruso"], answer: 1 },
+  { topic: "31 — Разрешение на пребывание", q: "Разрешение на временное проживание содержит", qes: "El permiso de residencia temporal contiene", options: ["дату въезда", "только фамилию", "дату и место рождения"], optEs: ["la fecha de entrada", "solo el apellido", "la fecha y el lugar de nacimiento"], answer: 2 },
+  { topic: "31 — Разрешение на пребывание", q: "Квота на выдачу иностранным гражданам РВП ежегодно утверждается", qes: "La cuota para la expedición de permisos de residencia temporal a ciudadanos extranjeros es aprobada anualmente por", options: ["Президентом РФ", "главой администрации субъекта РФ", "Правительством РФ"], optEs: ["el Presidente de la FR", "el jefe de la administración del sujeto de la FR", "el Gobierno de la FR"], answer: 2 },
+  { topic: "31 — Разрешение на пребывание", q: "Какой срок разрешения на временное проживание установлен законодательством РФ?", qes: "¿Qué plazo de validez del permiso de residencia temporal establece la legislación de la FR?", options: ["1 год", "3 года", "5 лет"], optEs: ["1 año", "3 años", "5 años"], answer: 1 },
 
   // Task 32
-  { topic: "32 — Миграционный учёт", q: "Срок действия разрешения на временное проживание составляет", options: ["7 лет", "5 лет", "3 года"], answer: 2 },
-  { topic: "32 — Миграционный учёт", q: "После приезда в Россию иностранный гражданин должен встать на учёт в течение", options: ["5 рабочих дней", "7 рабочих дней", "10 рабочих дней"], answer: 1 },
-  { topic: "32 — Миграционный учёт", q: "Стороной, принимающей иностранного гражданина в РФ, может выступать", options: ["только физическое лицо", "только юридическое лицо", "как физическое, так и юридическое лицо"], answer: 2 },
-  { topic: "32 — Миграционный учёт", q: "Повторная подача заявления о выдаче РВП после первичного отказа возможна не ранее чем через", options: ["1 год", "3 года", "5 лет"], answer: 0 },
-  { topic: "32 — Миграционный учёт", q: "Уведомление о прибытии иностранного гражданина представляется в орган миграционного учёта в течение", options: ["3 рабочих дней", "7 рабочих дней", "14 рабочих дней"], answer: 1 },
-  { topic: "32 — Миграционный учёт", q: "Основание аннулирования РВП иностранного гражданина", options: ["180 суток в течение года не осуществлял трудовую деятельность", "владеет иностранным языком", "получал заработную плату в течение трёх лет"], answer: 0 },
-  { topic: "32 — Миграционный учёт", q: "Разрешение на временное проживание содержит сведения", options: ["об источниках доходов", "о выданной визе", "о гражданстве иностранного гражданина"], answer: 2 },
-  { topic: "32 — Миграционный учёт", q: "Разрешение на временное проживание содержит сведения", options: ["о доходах", "о сроке действия разрешения", "о месте работы"], answer: 1 },
-  { topic: "32 — Миграционный учёт", q: "В какой орган подаются документы для получения РВП?", options: ["в ГУВМ МВД", "в Министерство иностранных дел РФ", "в Правительство РФ"], answer: 0 },
+  { topic: "32 — Миграционный учёт", q: "Срок действия разрешения на временное проживание составляет", qes: "El período de validez del permiso de residencia temporal es de", options: ["7 лет", "5 лет", "3 года"], optEs: ["7 años", "5 años", "3 años"], answer: 2 },
+  { topic: "32 — Миграционный учёт", q: "После приезда в Россию иностранный гражданин должен встать на учёт в течение", qes: "Tras la llegada a Rusia el ciudadano extranjero debe registrarse en un plazo de", options: ["5 рабочих дней", "7 рабочих дней", "10 рабочих дней"], optEs: ["5 días hábiles", "7 días hábiles", "10 días hábiles"], answer: 1 },
+  { topic: "32 — Миграционный учёт", q: "Стороной, принимающей иностранного гражданина в РФ, может выступать", qes: "La parte receptora del ciudadano extranjero en la FR puede ser", options: ["только физическое лицо", "только юридическое лицо", "как физическое, так и юридическое лицо"], optEs: ["solo una persona física", "solo una persona jurídica", "tanto una persona física como una jurídica"], answer: 2 },
+  { topic: "32 — Миграционный учёт", q: "Повторная подача заявления о выдаче РВП после первичного отказа возможна не ранее чем через", qes: "La presentación reiterada de la solicitud de permiso de residencia temporal tras la denegación inicial es posible no antes de", options: ["1 год", "3 года", "5 лет"], optEs: ["1 año", "3 años", "5 años"], answer: 0 },
+  { topic: "32 — Миграционный учёт", q: "Уведомление о прибытии иностранного гражданина представляется в орган миграционного учёта в течение", qes: "La notificación de llegada del ciudadano extranjero se presenta al órgano de registro migratorio en un plazo de", options: ["3 рабочих дней", "7 рабочих дней", "14 рабочих дней"], optEs: ["3 días hábiles", "7 días hábiles", "14 días hábiles"], answer: 1 },
+  { topic: "32 — Миграционный учёт", q: "Основание аннулирования РВП иностранного гражданина", qes: "Motivo de anulación del permiso de residencia temporal del ciudadano extranjero", options: ["180 суток в течение года не осуществлял трудовую деятельность", "владеет иностранным языком", "получал заработную плату в течение трёх лет"], optEs: ["no ejerció actividad laboral durante 180 días en el año", "conoce una lengua extranjera", "percibió salario durante tres años"], answer: 0 },
+  { topic: "32 — Миграционный учёт", q: "Разрешение на временное проживание содержит сведения", qes: "El permiso de residencia temporal contiene información", options: ["об источниках доходов", "о выданной визе", "о гражданстве иностранного гражданина"], optEs: ["sobre las fuentes de ingresos", "sobre la visa expedida", "sobre la ciudadanía del ciudadano extranjero"], answer: 2 },
+  { topic: "32 — Миграционный учёт", q: "Разрешение на временное проживание содержит сведения", qes: "El permiso de residencia temporal contiene información", options: ["о доходах", "о сроке действия разрешения", "о месте работы"], optEs: ["sobre los ingresos", "sobre el período de validez del permiso", "sobre el lugar de trabajo"], answer: 1 },
+  { topic: "32 — Миграционный учёт", q: "В какой орган подаются документы для получения РВП?", qes: "¿A qué organismo se presentan los documentos para obtener el permiso de residencia temporal?", options: ["в ГУВМ МВД", "в Министерство иностранных дел РФ", "в Правительство РФ"], optEs: ["al Departamento Principal de Asuntos Migratorios del Ministerio del Interior", "al Ministerio de Asuntos Exteriores de la FR", "al Gobierno de la FR"], answer: 0 },
 
   // Task 33 — Violations
-  { topic: "33 — Нарушения и санкции", q: "Представление ложных сведений при миграционном учёте влечёт", options: ["лишение свободы", "административный штраф с возможным выдворением", "лишение специального права"], answer: 1 },
-  { topic: "33 — Нарушения и санкции", q: "Нарушение иностранным гражданином правил въезда в РФ влечёт", options: ["лишение свободы", "наложение административного штрафа", "лишение водительских прав"], answer: 1 },
-  { topic: "33 — Нарушения и санкции", q: "Нарушение правил пересечения Государственной границы РФ предусматривает ответственность", options: ["административную", "гражданско-правовую", "дисциплинарную"], answer: 0 },
-  { topic: "33 — Нарушения и санкции", q: "Решение об административном выдворении по большинству дел принимает", options: ["прокуратура", "полиция", "суд"], answer: 2 },
-  { topic: "33 — Нарушения и санкции", q: "Аннулирование РВП влечёт за собой", options: ["депортацию", "лишение свободы", "административный штраф"], answer: 0 },
-  { topic: "33 — Нарушения и санкции", q: "Депортация – это", options: ["высылка иностранного гражданина", "мера социальной ответственности", "уголовное наказание"], answer: 0 },
-  { topic: "33 — Нарушения и санкции", q: "В какой срок иностранный гражданин должен выехать в случае аннулирования РВП?", options: ["90 дней", "30 дней", "15 дней"], answer: 2 },
-  { topic: "33 — Нарушения и санкции", q: "Одним из обязательных действий государства при депортации является", options: ["назначение административного штрафа", "выплата компенсации за утраченные документы", "содержание в специальном учреждении до принятия решения о депортации"], answer: 2 },
+  { topic: "33 — Нарушения и санкции", q: "Представление ложных сведений при миграционном учёте влечёт", qes: "La presentación de información falsa en el registro migratorio conlleva", options: ["лишение свободы", "административный штраф с возможным выдворением", "лишение специального права"], optEs: ["privación de libertad", "multa administrativa con posible expulsión", "privación de un derecho especial"], answer: 1 },
+  { topic: "33 — Нарушения и санкции", q: "Нарушение иностранным гражданином правил въезда в РФ влечёт", qes: "La violación por parte del ciudadano extranjero de las normas de entrada en la FR conlleva", options: ["лишение свободы", "наложение административного штрафа", "лишение водительских прав"], optEs: ["privación de libertad", "imposición de una multa administrativa", "privación del permiso de conducir"], answer: 1 },
+  { topic: "33 — Нарушения и санкции", q: "Нарушение правил пересечения Государственной границы РФ предусматривает ответственность", qes: "La violación de las normas de cruce de la frontera estatal de la FR prevé responsabilidad", options: ["административную", "гражданско-правовую", "дисциплинарную"], optEs: ["administrativa", "civil", "disciplinaria"], answer: 0 },
+  { topic: "33 — Нарушения и санкции", q: "Решение об административном выдворении по большинству дел принимает", qes: "La decisión sobre la expulsión administrativa en la mayoría de los casos la toma", options: ["прокуратура", "полиция", "суд"], optEs: ["la fiscalía", "la policía", "el tribunal"], answer: 2 },
+  { topic: "33 — Нарушения и санкции", q: "Аннулирование РВП влечёт за собой", qes: "La anulación del permiso de residencia temporal conlleva", options: ["депортацию", "лишение свободы", "административный штраф"], optEs: ["la deportación", "la privación de libertad", "una multa administrativa"], answer: 0 },
+  { topic: "33 — Нарушения и санкции", q: "Депортация – это", qes: "La deportación es", options: ["высылка иностранного гражданина", "мера социальной ответственности", "уголовное наказание"], optEs: ["la expulsión del ciudadano extranjero", "una medida de responsabilidad social", "una pena penal"], answer: 0 },
+  { topic: "33 — Нарушения и санкции", q: "В какой срок иностранный гражданин должен выехать в случае аннулирования РВП?", qes: "¿En qué plazo debe salir el ciudadano extranjero en caso de anulación del permiso de residencia temporal?", options: ["90 дней", "30 дней", "15 дней"], optEs: ["90 días", "30 días", "15 días"], answer: 2 },
+  { topic: "33 — Нарушения и санкции", q: "Одним из обязательных действий государства при депортации является", qes: "Una de las acciones obligatorias del Estado durante la deportación es", options: ["назначение административного штрафа", "выплата компенсации за утраченные документы", "содержание в специальном учреждении до принятия решения о депортации"], optEs: ["la imposición de una multa administrativa", "el pago de compensación por documentos perdidos", "la internación en un establecimiento especial hasta la adopción de la decisión de deportación"], answer: 2 },
 
   // Task 34 — True/False
-  { topic: "34 — Верно/Неверно", q: "РВП аннулируется в случае, если иностранный гражданин создаёт угрозу безопасности РФ или граждан РФ. Верно ли это?", options: ["верно", "неверно"], answer: 0 },
-  { topic: "34 — Верно/Неверно", q: "Если срок пребывания иностранного гражданина сокращён, он обязан выехать в течение трёх дней. Верно?", options: ["верно", "неверно"], answer: 0 },
-  { topic: "34 — Верно/Неверно", q: "К нарушителям правил пребывания в РФ применяется административный штраф. Верно?", options: ["верно", "неверно"], answer: 0 },
-  { topic: "34 — Верно/Неверно", q: "Наличие непогашенной судимости за тяжкое преступление влечёт отказ в выдаче РВП. Верно?", options: ["верно", "неверно"], answer: 0 },
-  { topic: "34 — Верно/Неверно", q: "Административное выдворение не может применяться к иностранным военнослужащим. Верно?", options: ["верно", "неверно"], answer: 0 },
-  { topic: "34 — Верно/Неверно", q: "Иностранный гражданин, виновный в нарушении законодательства РФ, привлекается к ответственности по законодательству РФ. Верно?", options: ["верно", "неверно"], answer: 0 },
-  { topic: "34 — Верно/Неверно", q: "Любые проступки иностранного гражданина влекут заключение под стражу в специализированное учреждение. Верно?", options: ["верно", "неверно"], answer: 1 },
-  { topic: "34 — Верно/Неверно", q: "Въезд в РФ может быть запрещён иностранным гражданам при двух и более привлечениях к административной ответственности за три года. Верно?", options: ["верно", "неверно"], answer: 0 },
+  { topic: "34 — Верно/Неверно", q: "РВП аннулируется в случае, если иностранный гражданин создаёт угрозу безопасности РФ или граждан РФ. Верно ли это?", qes: "El permiso de residencia temporal se anula si el ciudadano extranjero representa una amenaza para la seguridad de la FR o de sus ciudadanos. ¿Es esto correcto?", options: ["верно", "неверно"], optEs: ["correcto", "incorrecto"], answer: 0 },
+  { topic: "34 — Верно/Неверно", q: "Если срок пребывания иностранного гражданина сокращён, он обязан выехать в течение трёх дней. Верно?", qes: "Si se reduce el plazo de estancia del ciudadano extranjero, está obligado a salir en un plazo de tres días. ¿Correcto?", options: ["верно", "неверно"], optEs: ["correcto", "incorrecto"], answer: 0 },
+  { topic: "34 — Верно/Неверно", q: "К нарушителям правил пребывания в РФ применяется административный штраф. Верно?", qes: "A los infractores de las normas de estancia en la FR se les aplica una multa administrativa. ¿Correcto?", options: ["верно", "неверно"], optEs: ["correcto", "incorrecto"], answer: 0 },
+  { topic: "34 — Верно/Неверно", q: "Наличие непогашенной судимости за тяжкое преступление влечёт отказ в выдаче РВП. Верно?", qes: "La existencia de antecedentes penales no cancelados por un delito grave conlleva la denegación del permiso de residencia temporal. ¿Correcto?", options: ["верно", "неверно"], optEs: ["correcto", "incorrecto"], answer: 0 },
+  { topic: "34 — Верно/Неверно", q: "Административное выдворение не может применяться к иностранным военнослужащим. Верно?", qes: "La expulsión administrativa no puede aplicarse a los militares extranjeros. ¿Correcto?", options: ["верно", "неверно"], optEs: ["correcto", "incorrecto"], answer: 0 },
+  { topic: "34 — Верно/Неверно", q: "Иностранный гражданин, виновный в нарушении законодательства РФ, привлекается к ответственности по законодательству РФ. Верно?", qes: "El ciudadano extranjero culpable de infringir la legislación de la FR es procesado conforme a la legislación de la FR. ¿Correcto?", options: ["верно", "неверно"], optEs: ["correcto", "incorrecto"], answer: 0 },
+  { topic: "34 — Верно/Неверно", q: "Любые проступки иностранного гражданина влекут заключение под стражу в специализированное учреждение. Верно?", qes: "Cualquier infracción del ciudadano extranjero conlleva su internamiento en un establecimiento especializado. ¿Correcto?", options: ["верно", "неверно"], optEs: ["correcto", "incorrecto"], answer: 1 },
+  { topic: "34 — Верно/Неверно", q: "Въезд в РФ может быть запрещён иностранным гражданам при двух и более привлечениях к административной ответственности за три года. Верно?", qes: "La entrada en la FR puede prohibirse a los ciudadanos extranjeros con dos o más sanciones administrativas en tres años. ¿Correcto?", options: ["верно", "неверно"], optEs: ["correcto", "incorrecto"], answer: 0 },
 ];
 
 // ===== SRS SYSTEM =====
-// SM-2 simplified: levels 0-5
-// nextReview = now + interval
 const SRS_KEY = 'srs_history_law_v2';
 let srsData = {};
 try { srsData = JSON.parse(localStorage.getItem(SRS_KEY) || '{}'); } catch(e) {}
@@ -745,12 +779,12 @@ function updateSRS(idx, wasCorrect) {
   if (wasCorrect) {
     card.correct++;
     card.level = Math.min(card.level + 1, 5);
-    const intervals = [1, 2, 4, 8, 16, 32]; // minutes for demo, multiply by 60000
+    const intervals = [1, 2, 4, 8, 16, 32];
     card.nextReview = now + intervals[card.level] * 60000;
   } else {
     card.wrong++;
     card.level = Math.max(0, card.level - 1);
-    card.nextReview = now + 60000; // 1 min
+    card.nextReview = now + 60000;
   }
   srsData[idx] = card;
   saveSRS();
@@ -766,7 +800,6 @@ function getDueCards(indices) {
     if (s.nextReview <= now) due.push(idx);
     else notYet.push(idx);
   });
-  // Sort due: lower level first (most needed review)
   due.sort((a,b) => getCardSRS(a).level - getCardSRS(b).level);
   return { due, notYet };
 }
@@ -842,17 +875,15 @@ let answered = false;
 function startStudy() {
   if (selectedTopics.size === 0) return;
 
-  // Gather all selected indices
   let allIndices = [];
   selectedTopics.forEach(t => { allIndices = allIndices.concat(topicMap[t]); });
 
   const { due, notYet } = getDueCards(allIndices);
-  // Use due cards first, then add some new/not-yet
   const newCards = notYet.slice(0, Math.max(5, Math.ceil(due.length * 0.3)));
   queue = shuffle([...due, ...newCards]);
 
   if (queue.length === 0) {
-    queue = shuffle([...allIndices]); // fallback: all cards
+    queue = shuffle([...allIndices]);
   }
 
   sessionIdx = 0;
@@ -873,14 +904,12 @@ function showCard() {
   const q = ALL_QUESTIONS[idx];
   const srs = getCardSRS(idx);
 
-  // Update stats
   document.getElementById('stat-current').textContent = sessionIdx + 1;
   document.getElementById('stat-total').textContent = queue.length;
   document.getElementById('stat-correct').textContent = sessionCorrect;
   document.getElementById('stat-wrong').textContent = sessionWrong;
   document.getElementById('progress-fill').style.width = (sessionIdx / queue.length * 100) + '%';
 
-  // SRS dots
   const dots = document.getElementById('srs-dots');
   dots.innerHTML = '';
   for (let i = 0; i < 5; i++) {
@@ -889,28 +918,24 @@ function showCard() {
     dots.appendChild(d);
   }
 
-  // Topic tag
   document.getElementById('card-topic').textContent = q.topic.replace(/\d+ — /, '');
-
-  // Question
   document.getElementById('question-text').textContent = q.q;
+  document.getElementById('question-translation').textContent = q.qes;
 
-  // Options
   const list = document.getElementById('options-list');
   list.innerHTML = '';
   const letters = ['А', 'Б', 'В', 'Г'];
   q.options.forEach((opt, i) => {
     const btn = document.createElement('button');
     btn.className = 'option-btn';
-    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+    const esText = q.optEs && q.optEs[i] ? `<span class="option-es">${q.optEs[i]}</span>` : '';
+    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span class="option-text-wrap"><span class="option-main">${opt}</span>${esText}</span>`;
     btn.onclick = () => selectAnswer(i, btn);
     list.appendChild(btn);
   });
 
-  // Hide feedback
   document.getElementById('feedback-row').style.display = 'none';
 
-  // Animate card
   const card = document.getElementById('card');
   card.classList.remove('correct-flash', 'wrong-flash');
   void card.offsetWidth;
@@ -928,7 +953,6 @@ function selectAnswer(chosen, btn) {
   const correct = q.answer;
   const isCorrect = chosen === correct;
 
-  // Style options
   const btns = document.querySelectorAll('.option-btn');
   btns.forEach((b, i) => {
     b.disabled = true;
@@ -936,23 +960,20 @@ function selectAnswer(chosen, btn) {
     else if (i === chosen && !isCorrect) b.classList.add('wrong');
   });
 
-  // Flash card
   const card = document.getElementById('card');
   card.classList.remove('correct-flash', 'wrong-flash');
   void card.offsetWidth;
   card.classList.add(isCorrect ? 'correct-flash' : 'wrong-flash');
 
-  // Update SRS
   const updated = updateSRS(idx, isCorrect);
 
   if (isCorrect) sessionCorrect++;
   else sessionWrong++;
 
-  // Feedback
   const fbMsg = document.getElementById('feedback-msg');
   fbMsg.className = 'feedback-msg ' + (isCorrect ? 'correct' : 'wrong');
   fbMsg.textContent = isCorrect ? '✓ Правильно!' : '✗ Неверно';
-  
+
   const srsInfo = document.getElementById('srs-info');
   const levelNames = ['Новое', 'Начало', 'Знакомое', 'Хорошо', 'Отлично', 'Мастерство'];
   srsInfo.textContent = `Уровень: ${levelNames[updated.level]}`;
@@ -980,7 +1001,6 @@ function showResults() {
   document.getElementById('results-title').textContent = title;
   document.getElementById('results-subtitle').textContent = `Правильных ответов: ${sessionCorrect} из ${queue.length}`;
 
-  // Count due
   let allIndices = [];
   selectedTopics.forEach(t => { allIndices = allIndices.concat(topicMap[t]); });
   const now = Date.now();
