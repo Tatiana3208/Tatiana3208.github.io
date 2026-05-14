@@ -1,0 +1,329 @@
+
+<style>
+  .av-wrap { padding: 1.5rem 0; font-size: 14px; }
+  .av-section { margin-bottom: 2rem; }
+  .av-title { font-size: 16px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 8px; }
+  .av-badge { font-size: 11px; font-weight: 500; padding: 2px 10px; border-radius: 99px; }
+  .badge-m { background: #B5D4F4; color: #0C447C; }
+  .badge-f { background: #F4C0D1; color: #72243E; }
+  .badge-n { background: #C0DD97; color: #3B6D11; }
+  .badge-pl { background: #D3D1C7; color: #444441; }
+  .av-grid { display: grid; gap: 10px; }
+  .av-grid-2 { grid-template-columns: 1fr 1fr; }
+  .av-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .av-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; }
+  .av-card-head { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; }
+  .av-row { display: flex; justify-content: space-between; align-items: baseline; padding: 5px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .av-row:last-child { border-bottom: none; }
+  .av-case { color: var(--color-text-secondary); font-size: 13px; }
+  .av-form { font-weight: 500; color: var(--color-text-primary); }
+  .av-ending { color: #185FA5; font-weight: 500; }
+  .av-ending-f { color: #993556; font-weight: 500; }
+  .av-ending-n { color: #3B6D11; font-weight: 500; }
+
+  .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.25rem; }
+  .pill { border: 0.5px solid var(--color-border-secondary); border-radius: 99px; padding: 5px 14px; font-size: 13px; color: var(--color-text-secondary); cursor: pointer; transition: all 0.15s; background: var(--color-background-primary); }
+  .pill.active-m { background: #E6F1FB; border-color: #378ADD; color: #0C447C; }
+  .pill.active-f { background: #FBEAF0; border-color: #D4537E; color: #72243E; }
+  .pill.active-n { background: #EAF3DE; border-color: #639922; color: #27500A; }
+  .pill.active-pl { background: #F1EFE8; border-color: #888780; color: #2C2C2A; }
+
+  .ex-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 10px; }
+  .ex-ru { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+  .ex-es { font-size: 13px; color: var(--color-text-secondary); }
+  .ex-highlight { padding: 1px 5px; border-radius: 4px; }
+  .hl-m { background: #B5D4F4; color: #0C447C; }
+  .hl-f { background: #F4C0D1; color: #72243E; }
+  .hl-n { background: #C0DD97; color: #3B6D11; }
+  .hl-pl { background: #D3D1C7; color: #444441; }
+
+  .tip-box { background: var(--color-background-secondary); border-left: 3px solid #378ADD; border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; padding: 0.75rem 1rem; font-size: 13px; color: var(--color-text-secondary); margin-top: 0.5rem; line-height: 1.6; }
+  .tip-box strong { color: var(--color-text-primary); }
+
+  .tab-bar2 { display: flex; gap: 6px; margin-bottom: 1.25rem; }
+  .tab2 { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 6px 16px; font-size: 13px; cursor: pointer; color: var(--color-text-secondary); transition: all 0.15s; }
+  .tab2.on { background: #E6F1FB; border-color: #378ADD; color: #0C447C; font-weight: 500; }
+
+  .quiz-q { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 1rem; }
+  .quiz-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .quiz-opt { background: var(--color-background-primary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 10px 14px; font-size: 14px; cursor: pointer; color: var(--color-text-primary); transition: all 0.15s; text-align: center; }
+  .quiz-opt:hover { border-color: #378ADD; background: #E6F1FB; color: #0C447C; }
+  .quiz-opt.correct { background: #EAF3DE; border-color: #639922; color: #27500A; font-weight: 500; }
+  .quiz-opt.wrong { background: #FCEBEB; border-color: #E24B4A; color: #791F1F; }
+  .quiz-next { margin-top: 12px; background: #378ADD; color: #fff; border: none; border-radius: var(--border-radius-md); padding: 10px 24px; font-size: 14px; cursor: pointer; display: none; }
+  .quiz-next:hover { background: #185FA5; }
+  .quiz-score { font-size: 13px; color: var(--color-text-secondary); margin-top: 8px; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 1.25rem; }
+  .leg-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--color-text-secondary); }
+  .leg-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-m { background: #378ADD; }
+  .dot-f { background: #D4537E; }
+  .dot-n { background: #639922; }
+  .dot-pl { background: #888780; }
+
+  @media (max-width: 520px) {
+    .av-grid-2, .av-grid-3 { grid-template-columns: 1fr; }
+    .quiz-opts { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="av-wrap">
+  <h2 class="sr-only">Guía visual del caso acusativo en ruso para hispanohablantes</h2>
+
+  <div class="tab-bar2">
+    <button class="tab2 on" onclick="showTab('tabla')">Tabla</button>
+    <button class="tab2" onclick="showTab('ejemplos')">Ejemplos</button>
+    <button class="tab2" onclick="showTab('quiz')">Quiz</button>
+  </div>
+
+  <!-- TAB 1: TABLA -->
+  <div id="tab-tabla">
+    <div class="av-section">
+      <div class="tip-box">
+        <strong>¿Para qué sirve el acusativo?</strong><br>
+        Es el caso del objeto directo — la persona o cosa que recibe la acción del verbo.<br>
+        Я вижу <strong>книгу</strong> → Veo <strong>el libro</strong> · Я люблю <strong>маму</strong> → Quiero a <strong>mamá</strong>
+      </div>
+    </div>
+
+    <div class="av-section">
+      <div class="av-title">Sustantivos — terminaciones en acusativo</div>
+      <div class="legend">
+        <span class="leg-item"><span class="leg-dot dot-m"></span>Masculino</span>
+        <span class="leg-item"><span class="leg-dot dot-f"></span>Femenino</span>
+        <span class="leg-item"><span class="leg-dot dot-n"></span>Neutro</span>
+        <span class="leg-item"><span class="leg-dot dot-pl"></span>Plural</span>
+      </div>
+      <div class="av-grid av-grid-2">
+
+        <!-- MASCULINO -->
+        <div class="av-card">
+          <div class="av-card-head"><span class="av-badge badge-m">Masculino</span></div>
+          <div class="av-row"><span class="av-case">Animado (persona/animal)</span></div>
+          <div class="av-row"><span class="av-form">студент → студент<span class="av-ending">-а</span></span></div>
+          <div class="av-row"><span class="av-form">кот → кот<span class="av-ending">-а</span></span></div>
+          <div style="height:8px"></div>
+          <div class="av-row"><span class="av-case">Inanimado (cosa)</span></div>
+          <div class="av-row"><span class="av-form">стол → стол (= nominativo)</span></div>
+          <div class="av-row"><span class="av-form">город → город</span></div>
+        </div>
+
+        <!-- FEMENINO -->
+        <div class="av-card">
+          <div class="av-card-head"><span class="av-badge badge-f">Femenino</span></div>
+          <div class="av-row"><span class="av-case">-а → -у</span></div>
+          <div class="av-row"><span class="av-form">книга → книг<span class="av-ending-f">-у</span></span></div>
+          <div class="av-row"><span class="av-form">мама → мам<span class="av-ending-f">-у</span></span></div>
+          <div style="height:8px"></div>
+          <div class="av-row"><span class="av-case">-я → -ю</span></div>
+          <div class="av-row"><span class="av-form">земля → земл<span class="av-ending-f">-ю</span></span></div>
+          <div class="av-row"><span class="av-form">семья → семь<span class="av-ending-f">-ю</span></span></div>
+        </div>
+
+        <!-- NEUTRO -->
+        <div class="av-card">
+          <div class="av-card-head"><span class="av-badge badge-n">Neutro</span></div>
+          <div class="av-row"><span class="av-case">Sin cambio (= nominativo)</span></div>
+          <div class="av-row"><span class="av-form">окно → окно</span></div>
+          <div class="av-row"><span class="av-form">море → море</span></div>
+          <div class="av-row"><span class="av-form">имя → имя</span></div>
+        </div>
+
+        <!-- PLURAL -->
+        <div class="av-card">
+          <div class="av-card-head"><span class="av-badge badge-pl">Plural</span></div>
+          <div class="av-row"><span class="av-case">Animado = genitivo pl.</span></div>
+          <div class="av-row"><span class="av-form">студенты → студент-ов</span></div>
+          <div style="height:8px"></div>
+          <div class="av-row"><span class="av-case">Inanimado = nominativo pl.</span></div>
+          <div class="av-row"><span class="av-form">книги → книги</span></div>
+          <div class="av-row"><span class="av-form">столы → столы</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="av-section">
+      <div class="av-title">Adjetivos en acusativo</div>
+      <div class="av-grid av-grid-3">
+        <div class="av-card">
+          <div class="av-card-head"><span class="av-badge badge-m">Masc. animado</span></div>
+          <div class="av-row"><span class="av-case">-ого / -его</span></div>
+          <div class="av-row"><span class="av-form">нов<span class="av-ending">-ого</span> студента</span></div>
+        </div>
+        <div class="av-card">
+          <div class="av-card-head"><span class="av-badge badge-m">Masc. inanimado</span></div>
+          <div class="av-row"><span class="av-case">-ый / -ий (= nom.)</span></div>
+          <div class="av-row"><span class="av-form">нов<span class="av-ending">-ый</span> стол</span></div>
+        </div>
+        <div class="av-card">
+          <div class="av-card-head"><span class="av-badge badge-f">Femenino</span></div>
+          <div class="av-row"><span class="av-case">-ую / -юю</span></div>
+          <div class="av-row"><span class="av-form">нов<span class="av-ending-f">-ую</span> книгу</span></div>
+        </div>
+        <div class="av-card">
+          <div class="av-card-head"><span class="av-badge badge-n">Neutro</span></div>
+          <div class="av-row"><span class="av-case">-ое / -ее (= nom.)</span></div>
+          <div class="av-row"><span class="av-form">нов<span class="av-ending-n">-ое</span> окно</span></div>
+        </div>
+        <div class="av-card">
+          <div class="av-card-head"><span class="av-badge badge-pl">Plural animado</span></div>
+          <div class="av-row"><span class="av-case">-ых / -их</span></div>
+          <div class="av-row"><span class="av-form">нов<span class="av-ending">-ых</span> студентов</span></div>
+        </div>
+        <div class="av-card">
+          <div class="av-card-head"><span class="av-badge badge-pl">Plural inanim.</span></div>
+          <div class="av-row"><span class="av-case">-ые / -ие (= nom.)</span></div>
+          <div class="av-row"><span class="av-form">нов<span class="av-ending">-ые</span> книги</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="av-section">
+      <div class="av-title">Verbos que rigen acusativo</div>
+      <div class="av-grid av-grid-2">
+        <div class="av-card">
+          <div class="av-row"><span class="av-case">видеть</span><span class="av-form">ver</span></div>
+          <div class="av-row"><span class="av-case">любить</span><span class="av-form">amar</span></div>
+          <div class="av-row"><span class="av-case">читать</span><span class="av-form">leer</span></div>
+          <div class="av-row"><span class="av-case">слушать</span><span class="av-form">escuchar</span></div>
+          <div class="av-row"><span class="av-case">знать</span><span class="av-form">saber / conocer</span></div>
+        </div>
+        <div class="av-card">
+          <div class="av-row"><span class="av-case">покупать</span><span class="av-form">comprar</span></div>
+          <div class="av-row"><span class="av-case">пить</span><span class="av-form">beber</span></div>
+          <div class="av-row"><span class="av-case">есть</span><span class="av-form">comer</span></div>
+          <div class="av-row"><span class="av-case">ждать</span><span class="av-form">esperar</span></div>
+          <div class="av-row"><span class="av-case">писать</span><span class="av-form">escribir</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: EJEMPLOS -->
+  <div id="tab-ejemplos" style="display:none">
+    <div class="pill-row">
+      <button class="pill active-m" onclick="filterEx('m',this)">Masculino</button>
+      <button class="pill active-f" onclick="filterEx('f',this)">Femenino</button>
+      <button class="pill active-n" onclick="filterEx('n',this)">Neutro</button>
+      <button class="pill active-pl" onclick="filterEx('pl',this)">Plural</button>
+      <button class="pill" onclick="filterEx('all',this)" style="border-color:var(--color-border-primary);color:var(--color-text-primary)">Todos</button>
+    </div>
+
+    <div id="examples-list"></div>
+
+    <div class="tip-box" style="margin-top:1rem">
+      <strong>Truco mnemotécnico:</strong> Las terminaciones del acusativo femenino <strong>-у / -ю</strong> suenan como "u" de "único objeto" — exactamente lo que marca el acusativo: el objeto único de la acción.
+    </div>
+  </div>
+
+  <!-- TAB 3: QUIZ -->
+  <div id="tab-quiz" style="display:none">
+    <div id="quiz-container"></div>
+  </div>
+</div>
+
+<script>
+const examples = [
+  { gen: 'm', ru: 'Я вижу <span class="ex-highlight hl-m">брата</span>.', es: 'Veo a mi hermano. (брат → брат<b>а</b>, animado)' },
+  { gen: 'm', ru: 'Он читает <span class="ex-highlight hl-m">журнал</span>.', es: 'Él lee una revista. (журнал → журнал, inanimado sin cambio)' },
+  { gen: 'm', ru: 'Я люблю <span class="ex-highlight hl-m">этого профессора</span>.', es: 'Quiero a este profesor. (профессор → профессор<b>а</b>)' },
+  { gen: 'f', ru: 'Я читаю <span class="ex-highlight hl-f">книгу</span>.', es: 'Estoy leyendo un libro. (книга → книг<b>у</b>)' },
+  { gen: 'f', ru: 'Он любит <span class="ex-highlight hl-f">маму</span>.', es: 'Él quiere a su mamá. (мама → мам<b>у</b>)' },
+  { gen: 'f', ru: 'Мы ждём <span class="ex-highlight hl-f">подругу</span>.', es: 'Esperamos a una amiga. (подруга → подруг<b>у</b>)' },
+  { gen: 'n', ru: 'Я вижу <span class="ex-highlight hl-n">окно</span>.', es: 'Veo una ventana. (окно → окно, neutro sin cambio)' },
+  { gen: 'n', ru: 'Он пьёт <span class="ex-highlight hl-n">молоко</span>.', es: 'Él bebe leche. (молоко → молоко)' },
+  { gen: 'pl', ru: 'Я знаю <span class="ex-highlight hl-pl">этих студентов</span>.', es: 'Conozco a estos estudiantes. (студенты → студент<b>ов</b>, anim. pl.)' },
+  { gen: 'pl', ru: 'Она читает <span class="ex-highlight hl-pl">книги</span>.', es: 'Ella lee libros. (книги → книги, inanim. pl. sin cambio)' },
+];
+
+const quizData = [
+  { q: 'Я вижу ___ (мама).', opts: ['маму', 'мама', 'мамы', 'маме'], ans: 0, exp: 'мама → мам-у (femenino en -а → -у)' },
+  { q: 'Он читает ___ (книга).', opts: ['книгу', 'книга', 'книги', 'книге'], ans: 0, exp: 'книга → книг-у (femenino)' },
+  { q: 'Я люблю ___ (брат).', opts: ['брата', 'брат', 'брату', 'брате'], ans: 0, exp: 'брат → брат-а (masculino animado)' },
+  { q: 'Она ждёт ___ (профессор).', opts: ['профессора', 'профессор', 'профессору', 'профессоры'], ans: 0, exp: 'профессор → профессор-а (masculino animado)' },
+  { q: 'Мы видим ___ (окно).', opts: ['окно', 'окна', 'окне', 'окну'], ans: 0, exp: 'окно → окно (neutro sin cambio)' },
+  { q: 'Я пью ___ (молоко).', opts: ['молоко', 'молоку', 'молока', 'молоке'], ans: 0, exp: 'молоко → молоко (neutro sin cambio)' },
+  { q: 'Он слушает ___ (музыка).', opts: ['музыку', 'музыки', 'музыке', 'музыка'], ans: 0, exp: 'музыка → музык-у (femenino)' },
+  { q: 'Я читаю ___ (новая книга).', opts: ['новую книгу', 'новая книга', 'новой книги', 'новую книги'], ans: 0, exp: 'нов-ая + книга → нов-ую + книг-у' },
+];
+
+let currentFilter = 'm';
+let qIdx = 0, score = 0, answered = false;
+
+function showTab(t) {
+  ['tabla','ejemplos','quiz'].forEach(id => {
+    document.getElementById('tab-'+id).style.display = id===t ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab2').forEach((b,i) => {
+    b.classList.toggle('on', ['tabla','ejemplos','quiz'][i]===t);
+  });
+  if (t==='ejemplos') renderExamples('all');
+  if (t==='quiz') { qIdx=0; score=0; renderQuiz(); }
+}
+
+function filterEx(gen, btn) {
+  currentFilter = gen;
+  document.querySelectorAll('.pill').forEach(p => {
+    p.classList.remove('active-m','active-f','active-n','active-pl');
+  });
+  if (gen==='m') btn.classList.add('active-m');
+  else if (gen==='f') btn.classList.add('active-f');
+  else if (gen==='n') btn.classList.add('active-n');
+  else if (gen==='pl') btn.classList.add('active-pl');
+  renderExamples(gen);
+}
+
+function renderExamples(gen) {
+  const list = document.getElementById('examples-list');
+  const filtered = gen==='all' ? examples : examples.filter(e=>e.gen===gen);
+  list.innerHTML = filtered.map(e => `
+    <div class="ex-card">
+      <div class="ex-ru">${e.ru}</div>
+      <div class="ex-es">${e.es}</div>
+    </div>
+  `).join('');
+}
+
+function renderQuiz() {
+  const c = document.getElementById('quiz-container');
+  if (qIdx >= quizData.length) {
+    c.innerHTML = `
+      <div class="av-card" style="text-align:center;padding:2rem">
+        <div style="font-size:32px;margin-bottom:12px">${score>=6?'🏆':score>=4?'⭐':'📖'}</div>
+        <div style="font-size:20px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px">${score}/${quizData.length} correctas</div>
+        <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:16px">${score>=6?'¡Excelente dominio del acusativo!':score>=4?'¡Bien! Sigue practicando.':'Repasa las tablas y vuelve a intentarlo.'}</div>
+        <button onclick="qIdx=0;score=0;renderQuiz()" style="background:#378ADD;color:#fff;border:none;border-radius:var(--border-radius-md);padding:10px 24px;font-size:14px;cursor:pointer">Repetir quiz</button>
+      </div>`;
+    return;
+  }
+  answered = false;
+  const q = quizData[qIdx];
+  c.innerHTML = `
+    <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:12px">Pregunta ${qIdx+1} de ${quizData.length} · ${score} correctas</div>
+    <div class="quiz-q">${q.q}</div>
+    <div class="quiz-opts">
+      ${q.opts.map((o,i) => `<button class="quiz-opt" onclick="answerQuiz(${i})">${o}</button>`).join('')}
+    </div>
+    <div id="quiz-exp" style="display:none;font-size:13px;color:var(--color-text-secondary);margin-top:10px;padding:8px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md)"></div>
+    <button class="quiz-next" id="quiz-next" onclick="qIdx++;renderQuiz()">Siguiente →</button>
+  `;
+}
+
+function answerQuiz(chosen) {
+  if (answered) return;
+  answered = true;
+  const q = quizData[qIdx];
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach((b,i) => {
+    b.disabled = true;
+    if (i===q.ans) b.classList.add('correct');
+    else if (i===chosen && chosen!==q.ans) b.classList.add('wrong');
+  });
+  if (chosen===q.ans) score++;
+  const exp = document.getElementById('quiz-exp');
+  exp.textContent = q.exp;
+  exp.style.display = 'block';
+  document.getElementById('quiz-next').style.display = 'inline-block';
+}
+</script>
